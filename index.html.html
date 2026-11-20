@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B2230">
+<title>Smart Teacher — Мұғалімнің цифрлық көмекшісі</title>
+<meta name="description" content="ҚМЖ, БЖБ/ТЖБ құрастырушы, КТЖ талдауы — №110, №130, №472 бұйрықтарға сай мұғалімнің цифрлық көмекшісі.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+--bg0:#07161E;--bg1:#0B2230;--surface:#0F2C3C;--surface2:#123243;--well:#0B2431;
+--line:rgba(126,214,238,.15);--line2:rgba(126,214,238,.3);
+--ink:#EAF6FA;--muted:#9DB9C6;--faint:#7FA0AF;
+--teal:#22C7E0;--sky:#59D6F2;--teal-deep:#0E8FAD;
+--gold:#F5B301;--gold-soft:#FFD34D;--magenta:#E052A6;--red:#F05A5F;--green:#37C978;--blue:#4D9FFF;--violet:#8B7CFF;
+--paper:#FBF6EA;--paper-ink:#243138;
+--fd:'Rubik',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif;--fm:'JetBrains Mono',monospace;
+--r:16px;--sh:0 14px 44px rgba(0,0,0,.4);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font:15px/1.55 var(--fb);background:var(--bg0);color:var(--ink);min-height:100vh;overflow-x:hidden}
+*{scrollbar-width:thin;scrollbar-color:#1899B4 #0B2230}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#0B2230;border-radius:8px}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#1FB4D2,#0E7C96);border-radius:8px;border:2px solid #0B2230}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#4FD6EF,#1899B4)}
+::selection{background:rgba(245,179,1,.35)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:var(--sky)}
+.bg{position:fixed;inset:0;z-index:-1;background:linear-gradient(160deg,#081820 0%,#0C2531 46%,#0A1E2B 100%)}
+.bg::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(126,214,238,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(126,214,238,.045) 1px,transparent 1px);background-size:34px 34px;mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 30%,transparent 100%)}
+.bg::after{content:"";position:absolute;inset:0;opacity:.05;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E")}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.26;will-change:transform}
+.b1{width:560px;height:560px;left:-140px;top:-160px;background:radial-gradient(circle,#17C3E6,transparent 65%);animation:drift1 26s ease-in-out infinite alternate}
+.b2{width:520px;height:520px;right:-160px;top:6%;background:radial-gradient(circle,#F5B301,transparent 65%);opacity:.16;animation:drift2 32s ease-in-out infinite alternate}
+.b3{width:420px;height:420px;left:34%;bottom:-220px;background:radial-gradient(circle,#D6409F,transparent 65%);opacity:.12;animation:drift1 38s ease-in-out infinite alternate-reverse}
+@keyframes drift1{to{transform:translate(90px,60px) scale(1.12)}}
+@keyframes drift2{to{transform:translate(-80px,90px) scale(.92)}}
+.ic{width:19px;height:19px;flex:none}
+/* ---------- topbar ---------- */
+.topbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:18px;padding:10px 22px;background:rgba(9,26,36,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);transition:box-shadow .3s}
+.topbar.scrolled{box-shadow:0 10px 34px rgba(0,0,0,.45)}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.logo-badge{width:42px;height:42px;flex:none;display:grid;place-items:center;border-radius:12px;background:linear-gradient(140deg,rgba(34,199,224,.18),rgba(245,179,1,.14));border:1px solid var(--line2)}
+.brand-t{font:800 18px var(--fd);letter-spacing:-.3px;white-space:nowrap}
+.brand-t em{font-style:normal;background:linear-gradient(90deg,var(--sky),var(--gold-soft));-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand-s{font-size:10.5px;color:var(--faint);letter-spacing:.3px;white-space:nowrap}
+.tabs{display:flex;gap:4px;margin:0 auto;background:rgba(11,36,49,.7);border:1px solid var(--line);border-radius:13px;padding:4px}
+.tab{display:flex;align-items:center;gap:7px;padding:9px 13px;border-radius:9px;font:600 13px var(--fb);color:var(--muted);white-space:nowrap;transition:.2s}
+.tab:hover{color:var(--ink);background:rgba(126,214,238,.07)}
+.tab.on{color:#06222B;background:linear-gradient(135deg,#3FD2EA,#12A3C4);box-shadow:0 4px 16px rgba(34,199,224,.3)}
+.tab .ob{font:700 9.5px var(--fm);padding:2px 5px;border-radius:5px;background:rgba(0,0,0,.22);color:inherit;opacity:.85}
+.tab:not(.on) .ob{background:rgba(126,214,238,.1);color:var(--faint)}
+.top-right{display:flex;align-items:center;gap:12px}
+.orders{font:700 10.5px var(--fm);color:var(--gold-soft);letter-spacing:.4px;padding:6px 10px;border:1px dashed rgba(245,179,1,.4);border-radius:8px;white-space:nowrap}
+.lang{display:flex;background:var(--well);border:1px solid var(--line2);border-radius:10px;padding:3px;gap:3px}
+.lang button{padding:6px 10px;border-radius:7px;font:700 12px var(--fb);color:var(--muted)}
+.lang button.on{background:linear-gradient(135deg,var(--gold-soft),#F0A400);color:#241B02}
+/* ---------- layout ---------- */
+main{max-width:1280px;margin:0 auto;padding:26px 22px 10px}
+.panel{display:none}
+.panel.active{display:block}
+.rise{opacity:0}
+body.ready .panel.active .rise{animation:rise .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d,0s)}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.panel-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:18px}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font:700 11px var(--fm);letter-spacing:1.2px;text-transform:uppercase;color:var(--gold-soft);margin-bottom:8px}
+.eyebrow::before{content:"";width:22px;height:2px;background:linear-gradient(90deg,var(--gold),transparent)}
+h1{font:800 clamp(24px,3.2vw,34px)/1.15 var(--fd);letter-spacing:-.6px}
+h1 .hl{background:linear-gradient(90deg,var(--sky),var(--gold-soft));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--muted);font-size:14px;max-width:640px;margin-top:8px}
+.card{background:linear-gradient(180deg,var(--surface),#0D2836);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:20px}
+.card-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.card-h h3{font:700 16px var(--fd);letter-spacing:-.2px}
+.card-h .sub{font-size:12px;color:var(--faint);width:100%}
+.badge110{font:700 10.5px var(--fm);color:#FFD98A;background:rgba(245,179,1,.13);border:1px solid rgba(245,179,1,.4);padding:3px 8px;border-radius:6px;white-space:nowrap}
+.spacer{flex:1}
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:11px;font:600 13.5px var(--fb);border:1px solid transparent;transition:.18s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn.gold{background:linear-gradient(135deg,#FFD34D,#F0A400);color:#241B02;box-shadow:0 6px 22px rgba(245,179,1,.28)}
+.btn.gold:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(245,179,1,.4);filter:brightness(1.05)}
+.btn.teal{background:linear-gradient(135deg,#2CC4DE,#0E8FAD);color:#03222B;box-shadow:0 5px 18px rgba(34,199,224,.25)}
+.btn.teal:hover{transform:translateY(-1px);filter:brightness(1.07)}
+.btn.ghost{background:rgba(126,214,238,.07);border-color:var(--line2);color:var(--ink)}
+.btn.ghost:hover{background:rgba(126,214,238,.14)}
+.btn.red{background:rgba(240,90,95,.1);border-color:rgba(240,90,95,.4);color:#FF9EA1}
+.btn.red:hover{background:rgba(240,90,95,.2)}
+.btn.lg{padding:14px 22px;font-size:15px;border-radius:13px}
+.btn.sm{padding:7px 11px;font-size:12.5px;border-radius:9px}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.ibtn{width:32px;height:32px;padding:0;border-radius:9px}
+.ibtn .ic{width:16px;height:16px}
+.pulse{animation:pulse 2.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 6px 22px rgba(245,179,1,.28)}50%{box-shadow:0 6px 34px rgba(245,179,1,.55)}}
+/* ---------- forms ---------- */
+.field{margin-bottom:12px}
+.lbl{display:flex;align-items:center;gap:6px;font:600 11.5px var(--fb);letter-spacing:.4px;color:var(--muted);margin-bottom:6px;text-transform:uppercase}
+.lbl .req{color:var(--gold)}
+.inp{width:100%;background:var(--well);border:1px solid var(--line2);color:var(--ink);border-radius:10px;padding:10px 12px;font:500 14px var(--fb);transition:.15s}
+.inp:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(34,199,224,.18)}
+.inp.err{border-color:var(--red);box-shadow:0 0 0 3px rgba(240,90,95,.18);animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+select.inp{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237FA0AF' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;cursor:pointer}
+textarea.inp{resize:vertical;min-height:120px;line-height:1.6}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper .inp{width:70px;text-align:center;font:700 15px var(--fm);padding:8px 4px}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none}
+.stepper input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.st-btn{width:34px;height:38px;flex:none;display:grid;place-items:center;background:rgba(126,214,238,.08);border:1px solid var(--line2);border-radius:9px;font:700 17px var(--fb);color:var(--sky)}
+.st-btn:hover{background:rgba(34,199,224,.2)}
+.st-unit{font-size:12px;color:var(--faint)}
+.seg{display:flex;background:var(--well);border:1px solid var(--line2);border-radius:11px;padding:3px;gap:3px}
+.seg>button,.seg>label{flex:1}
+.seg button{width:100%;padding:8px 10px;border-radius:8px;font:600 12.5px var(--fb);color:var(--muted);transition:.15s;white-space:nowrap}
+.seg button.on{background:linear-gradient(135deg,rgba(34,199,224,.28),rgba(34,199,224,.1));color:#CFF6FD;box-shadow:inset 0 0 0 1px rgba(34,199,224,.4)}
+.seg label{position:relative}
+.seg label input{position:absolute;opacity:0;inset:0}
+.seg label span{display:block;text-align:center;padding:9px 10px;border-radius:8px;font:700 13px var(--fb);color:var(--muted);cursor:pointer;transition:.15s}
+.seg label input:checked+span{background:linear-gradient(135deg,rgba(245,179,1,.3),rgba(245,179,1,.1));color:#FFE7A8;box-shadow:inset 0 0 0 1px rgba(245,179,1,.5)}
+.seg label input:focus-visible+span{outline:2px solid var(--gold)}
+.sw{display:inline-flex;align-items:center;gap:9px;cursor:pointer;font:600 13px var(--fb);color:var(--muted)}
+.sw input{position:absolute;opacity:0}
+.sw .tr{width:40px;height:22px;flex:none;border-radius:99px;background:var(--well);border:1px solid var(--line2);position:relative;transition:.2s}
+.sw .tr::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--faint);transition:.2s}
+.sw input:checked+.tr{background:rgba(55,201,120,.25);border-color:rgba(55,201,120,.6)}
+.sw input:checked+.tr::after{left:20px;background:var(--green)}
+.sw input:focus-visible+.tr{outline:2px solid var(--gold)}
+/* ---------- chips / tags ---------- */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font:600 12px var(--fb);background:rgba(126,214,238,.08);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.chip.mono{font:600 11px var(--fm);color:var(--sky);background:rgba(34,199,224,.09)}
+.chip.gold{color:#FFD98A;background:rgba(245,179,1,.1);border-color:rgba(245,179,1,.35)}
+.tag{display:inline-flex;padding:4px 9px;border-radius:7px;font:800 11px var(--fm);letter-spacing:.5px}
+.tag.b{background:rgba(34,199,224,.16);color:#7FE7F7;border:1px solid rgba(34,199,224,.45)}
+.tag.t{background:rgba(245,179,1,.15);color:#FFD34D;border:1px solid rgba(245,179,1,.45)}
+.fmt{width:36px;height:36px;flex:none;display:grid;place-items:center;border-radius:9px;font:800 14px var(--fm)}
+.fmt.fx{background:rgba(55,201,120,.14);color:#5FE39B;border:1px solid rgba(55,201,120,.4)}
+.fmt.fw{background:rgba(77,159,255,.14);color:#8FC0FF;border:1px solid rgba(77,159,255,.4)}
+.fmt.fp{background:rgba(240,90,95,.14);color:#FF9EA1;border:1px solid rgba(240,90,95,.4)}
+.fmt.fd{background:rgba(245,179,1,.14);color:#FFD34D;border:1px solid rgba(245,179,1,.4)}
+.fmt.ft{background:rgba(139,124,255,.14);color:#B7ADFF;border:1px solid rgba(139,124,255,.4)}
+.fchips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.fchip{display:inline-flex;align-items:center;gap:6px;font:600 12px var(--fb);color:var(--muted);padding:5px 11px;border-radius:99px;border:1px solid var(--line)}
+.fchip i{width:8px;height:8px;border-radius:50%;font-style:normal}
+/* ---------- KTP zone ---------- */
+.kempty{border:2px dashed var(--line2);border-radius:var(--r);padding:44px 24px;text-align:center;background:rgba(15,44,60,.5);transition:.2s}
+.kempty.over{border-color:var(--gold);background:rgba(245,179,1,.06)}
+.kempty .big{width:52px;height:52px;color:var(--sky);opacity:.9;margin:0 auto 6px}
+.kempty .big .ic{width:52px;height:52px}
+.kempty h3{font:700 19px var(--fd);margin:8px 0 6px}
+.kempty p{color:var(--muted);font-size:13.5px;max-width:520px;margin:0 auto 16px}
+.kempty .btnrow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+.priv{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;color:var(--faint)}
+.priv .ic{width:14px;height:14px;color:var(--green)}
+.ktp{margin-bottom:18px}
+.ktp-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.kfile{display:flex;align-items:center;gap:11px;min-width:0;flex:1}
+.kfile .nm{font:700 14px var(--fb);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:340px}
+.kfile .mt{font-size:11.5px;color:var(--faint);display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.kacts{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.stat{display:flex;align-items:center;gap:12px;padding:13px 15px;background:var(--well);border:1px solid var(--line);border-radius:13px}
+.st-ic{width:40px;height:40px;flex:none;display:grid;place-items:center;border-radius:11px}
+.st-ic .ic{width:20px;height:20px}
+.si-b{background:rgba(77,159,255,.14);color:#8FC0FF}
+.si-j{background:rgba(34,199,224,.14);color:#7FE7F7}
+.si-t{background:rgba(245,179,1,.14);color:#FFD34D}
+.si-q{background:rgba(224,82,166,.14);color:#F3A8D0}
+.st-n{font:700 25px var(--fm);line-height:1.1}
+.st-l{font-size:11px;color:var(--faint);letter-spacing:.3px}
+.yearl{font:700 11px var(--fm);letter-spacing:1px;text-transform:uppercase;color:var(--faint);margin:14px 0 8px}
+.quarters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.qcard{text-align:left;padding:11px 13px;background:var(--well);border:1px solid var(--line);border-radius:12px;transition:.15s}
+.qcard:hover{border-color:var(--line2);background:#0D2A3A}
+.qcard.on{border-color:rgba(245,179,1,.6);background:rgba(245,179,1,.07);box-shadow:0 0 0 1px rgba(245,179,1,.3)}
+.qcard .qt{font:700 13px var(--fd)}
+.qcard .dots{display:flex;gap:4px;margin:7px 0 5px;min-height:10px;flex-wrap:wrap}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.b{background:var(--teal);box-shadow:0 0 8px rgba(34,199,224,.6)}
+.dot.t{background:var(--gold);box-shadow:0 0 8px rgba(245,179,1,.6)}
+.qcard .ql{font-size:11px;color:var(--faint)}
+.ktoolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.ktoolbar .seg{flex:none}
+.ksearch{position:relative;flex:1;min-width:170px}
+.ksearch .ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--faint)}
+.ksearch .inp{padding-left:34px}
+.kcount{font:600 11.5px var(--fm);color:var(--faint);white-space:nowrap}
+.ktable{max-height:540px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--well)}
+.khead,.krow{display:grid;gap:10px;align-items:center;padding:9px 13px}
+.khead{position:sticky;top:0;z-index:2;background:#12303F;border-bottom:1px solid var(--line2);font:700 10.5px var(--fb);letter-spacing:.6px;text-transform:uppercase;color:var(--faint)}
+.ga{grid-template-columns:92px minmax(0,1fr) 158px 86px 100px 112px}
+.gl{grid-template-columns:46px 96px minmax(0,1fr) 158px 52px 76px}
+.krow{border-bottom:1px solid rgba(126,214,238,.07);font-size:13px;transition:background .15s}
+.krow:last-child{border-bottom:none}
+.krow:hover{background:rgba(34,199,224,.05)}
+.krow.sel{background:rgba(245,179,1,.07);box-shadow:inset 3px 0 0 var(--gold)}
+.krow.is-BJB{box-shadow:inset 3px 0 0 var(--teal);background:rgba(34,199,224,.045)}
+.krow.is-TJB{box-shadow:inset 3px 0 0 var(--gold);background:rgba(245,179,1,.05)}
+.kc{min-width:0}
+.kc.badge{display:flex;flex-direction:column;gap:3px;align-items:flex-start}
+.kc.badge .num{font:700 11px var(--fm);color:var(--faint)}
+.kc .tp{font-weight:600;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.kc .sec{font-size:11px;color:var(--faint);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kc.objs{display:flex;gap:4px;flex-wrap:wrap}
+.kc.q{font:700 12px var(--fm);color:var(--sky)}
+.kc.dt{font:600 12px var(--fm);color:var(--muted)}
+.kc.dt span{display:block;font-size:10.5px;color:var(--faint)}
+.kc.n,.kc.h{font:700 12px var(--fm);color:var(--faint)}
+.kc.d{font:600 12px var(--fm);color:var(--muted)}
+.kc.act{display:flex;gap:5px;justify-content:flex-end}
+.knorow{padding:34px;text-align:center;color:var(--faint);font-size:13px}
+.ktp-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.warnnote{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:#FFD98A;background:rgba(245,179,1,.08);border:1px solid rgba(245,179,1,.3);padding:6px 11px;border-radius:9px}
+.warnnote .ic{width:14px;height:14px}
+/* ---------- assess / qmj grids ---------- */
+.duo{display:grid;grid-template-columns:400px minmax(0,1fr);gap:18px;align-items:start}
+.output{scroll-margin-top:110px}
+.linkchip{display:flex;align-items:center;gap:8px;font:600 12px var(--fb);color:#FFD98A;background:rgba(245,179,1,.09);border:1px solid rgba(245,179,1,.35);border-radius:10px;padding:8px 11px;margin-bottom:12px}
+.linkchip .ic{width:14px;height:14px}
+.linkchip button{margin-left:auto;color:var(--faint);display:grid;place-items:center}
+.linkchip button:hover{color:var(--red)}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.paper-scroll{max-height:720px;overflow:auto;padding:14px;background:rgba(0,0,0,.2);border:1px solid var(--line);border-radius:12px}
+.paper{background:linear-gradient(180deg,#FDF9F0,#F5EEDC);border-radius:6px;box-shadow:0 12px 32px rgba(0,0,0,.4),inset 0 0 0 1px rgba(120,100,60,.18);padding:28px 30px;position:relative}
+.empty{border:1.5px dashed var(--line2);border-radius:13px;padding:40px 22px;text-align:center;color:var(--muted)}
+.empty .ic{width:42px;height:42px;color:var(--faint);margin-bottom:8px}
+.empty h4{font:700 16px var(--fd);color:var(--ink);margin-bottom:6px}
+.empty p{font-size:13px;max-width:420px;margin:0 auto}
+/* ---------- document ---------- */
+.doc{font-family:Georgia,'Times New Roman',serif;font-size:13.5px;line-height:1.45;color:var(--paper-ink);min-width:560px}
+.doc-min{font-size:10.5px;letter-spacing:.4px;color:#6B6250;text-transform:uppercase;text-align:center;margin-bottom:4px}
+.doc h2{font-size:17.5px;margin:6px 0 4px;text-align:center;line-height:1.3}
+.doc h4{font-size:13px;margin:14px 0 4px}
+.doc-sub{text-align:center;font-size:12px;color:#6B6250;margin-bottom:8px}
+.doc-seal{position:absolute;top:16px;right:18px;width:76px;height:76px;border:2px solid rgba(192,57,43,.7);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-10deg);color:rgba(192,57,43,.85);font:700 16px Georgia,serif;box-shadow:inset 0 0 0 3px rgba(192,57,43,.14);text-align:center;line-height:1.1}
+.doc-seal span{font-size:8.5px;letter-spacing:.6px;text-transform:uppercase}
+.doc table{width:100%;border-collapse:collapse;margin:9px 0}
+.doc th,.doc td{border:1px solid #A99F86;padding:5px 8px;font-size:12px;vertical-align:top;text-align:left}
+.doc-meta th{width:190px;background:#F0E8D4;font-weight:700;font-size:11.5px}
+.doc-spec thead th,.doc-grid thead th{background:#EAE0C8;font-size:11px;text-align:center;font-weight:700}
+.doc-spec .ctr{text-align:center}
+.doc tfoot td{font-weight:700;background:#F0E8D4}
+.doc-note{font-size:10.5px;color:#6B6250;margin-top:10px;font-style:italic}
+.lvbar{display:flex;gap:5px;margin:10px 0}
+.lv{padding:5px 9px;border-radius:6px;font:600 11px var(--fb);color:#08222B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:74px}
+.lv0{background:#7FDDEE}.lv1{background:#FFD34D}.lv2{background:#F3A8D0}
+.lvline{font-size:11.5px;margin:8px 0;color:#3D4A52}
+.page-break{height:0;break-before:page;page-break-before:always}
+.doc tr.strong td{font-weight:700;background:#F5EEDC}
+/* ---------- class manager ---------- */
+.classgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.pickcard{text-align:center;padding:26px 20px}
+.pick-name{font:800 clamp(22px,2.6vw,30px) var(--fd);min-height:46px;display:flex;align-items:center;justify-content:center;letter-spacing:-.4px;margin:10px 0 16px;transition:.15s}
+.pick-name.rolling{color:var(--sky);filter:blur(.5px)}
+.pick-name.pop{animation:pop .55s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{0%{transform:scale(.6);color:var(--gold-soft)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+.pickmeta{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:16px}
+.prog{width:150px;height:7px;border-radius:99px;background:var(--well);border:1px solid var(--line);overflow:hidden}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:99px;transition:width .4s}
+.hist{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:14px}
+.gcard{background:var(--well);border:1px solid var(--line);border-top:3px solid var(--gc,var(--teal));border-radius:13px;padding:13px 14px;animation:deal .45s cubic-bezier(.2,.9,.3,1) both;animation-delay:var(--d,0s)}
+@keyframes deal{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+.gcard h4{font:700 14px var(--fd);display:flex;align-items:center;gap:8px}
+.gcard h4 em{font-style:normal;font-size:11px;color:var(--faint);font-family:var(--fm)}
+.gcard .mem{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.cf{position:fixed;width:8px;height:8px;border-radius:2px;z-index:99;pointer-events:none;animation:cf .8s cubic-bezier(.1,.8,.3,1) forwards}
+@keyframes cf{from{transform:translate(0,0) rotate(0);opacity:1}to{transform:translate(var(--dx),var(--dy)) rotate(var(--rr));opacity:0}}
+/* ---------- AI tab ---------- */
+.aigrid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:18px;align-items:start;margin-bottom:18px}
+.pp{display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--line)}
+.pp:last-child{border-bottom:none}
+.pp-n{font:800 19px var(--fm);color:var(--gold);width:26px;flex:none}
+.pp h4{font:700 14.5px var(--fd);margin-bottom:4px}
+.pp p{font-size:13px;color:var(--muted)}
+.catgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.catinfo{display:flex;align-items:center;gap:9px;margin:13px 0;padding:11px 13px;background:var(--well);border:1px solid var(--line);border-radius:11px;font-size:13px;color:var(--muted)}
+.catinfo .ic{color:var(--gold)}
+.pfilters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.pfilters .chip{cursor:pointer;transition:.15s}
+.pfilters .chip:hover{border-color:var(--line2);color:var(--ink)}
+.pfilters .chip.on{background:rgba(245,179,1,.14);border-color:rgba(245,179,1,.5);color:#FFD98A}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.pcard{display:flex;flex-direction:column;gap:10px;padding:16px}
+.pcard .ph{display:flex;align-items:center;gap:10px}
+.pcard .ph .ic{color:var(--magenta);width:20px;height:20px}
+.pcard h4{font:700 14.5px var(--fd);flex:1}
+.pbody{background:#081B25;border:1px solid var(--line);border-radius:10px;padding:12px;font:12.3px/1.6 var(--fm);white-space:pre-wrap;color:#BFDBE6;max-height:190px;overflow:auto;flex:1}
+.pfoot{display:flex;align-items:center;gap:7px}
+.ptag{font:700 10px var(--fm);padding:3px 8px;border-radius:6px;background:rgba(139,124,255,.13);color:#B7ADFF;border:1px solid rgba(139,124,255,.35)}
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:16px}
+.modal.open{display:flex}
+.mscrim{position:absolute;inset:0;background:rgba(4,12,17,.72);backdrop-filter:blur(5px)}
+.mcard{position:relative;width:min(640px,100%);max-height:88vh;overflow:auto;background:linear-gradient(180deg,#113140,#0D2836);border:1px solid var(--line2);border-radius:18px;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.6);animation:mup .3s cubic-bezier(.2,.9,.3,1)}
+@keyframes mup{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
+.mhead{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.mhead h3{font:700 18px var(--fd)}
+.mhead p{font-size:12.5px;color:var(--faint);margin-top:3px}
+.mhead .x{margin-left:auto}
+.dz{border:2px dashed var(--line2);border-radius:14px;padding:32px 20px;text-align:center;cursor:pointer;transition:.2s;margin-top:14px}
+.dz:hover{border-color:var(--teal);background:rgba(34,199,224,.05)}
+.dz.over{border-color:var(--gold);background:rgba(245,179,1,.07)}
+.dz .ic{width:40px;height:40px;color:var(--sky);margin-bottom:8px}
+.dz h4{font:700 15px var(--fd);margin-bottom:4px}
+.dz p{font-size:12.5px;color:var(--faint);margin-bottom:14px}
+.mrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.busy{padding:26px 8px;text-align:center}
+.spin{width:34px;height:34px;border:3px solid rgba(34,199,224,.2);border-top-color:var(--teal);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 16px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.steps{list-style:none;text-align:left;max-width:300px;margin:0 auto}
+.steps li{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:13.5px;color:var(--faint)}
+.steps li .st{width:20px;height:20px;flex:none;display:grid;place-items:center;border-radius:50%;border:1.5px solid var(--line2);font-size:10px}
+.steps li.cur{color:var(--ink)}
+.steps li.cur .st{border-color:var(--teal);border-top-color:transparent;animation:sp .8s linear infinite}
+.steps li.done{color:var(--muted)}
+.steps li.done .st{background:rgba(55,201,120,.2);border-color:var(--green);color:var(--green)}
+.merr{display:flex;gap:11px;background:rgba(240,90,95,.09);border:1px solid rgba(240,90,95,.4);border-radius:12px;padding:14px;margin-top:14px;font-size:13px;color:#FFB9BB}
+.merr .ic{color:var(--red);flex:none;margin-top:2px}
+.mfoot{margin-top:16px;padding-top:13px;border-top:1px solid var(--line);display:flex;justify-content:center}
+/* ---------- toasts ---------- */
+#toasts{position:fixed;right:18px;bottom:18px;z-index:95;display:flex;flex-direction:column;gap:9px;max-width:min(380px,calc(100vw - 36px))}
+.toast{display:flex;align-items:center;gap:10px;background:#113140;border:1px solid var(--line2);border-left:3px solid var(--green);border-radius:12px;padding:12px 14px;font-size:13px;box-shadow:0 14px 40px rgba(0,0,0,.5);animation:tin .3s cubic-bezier(.2,.9,.3,1)}
+.toast .ic{width:17px;height:17px;color:var(--green)}
+.toast.info{border-left-color:var(--blue)}.toast.info .ic{color:var(--blue)}
+.toast.warn{border-left-color:var(--gold)}.toast.warn .ic{color:var(--gold)}
+.toast.err{border-left-color:var(--red)}.toast.err .ic{color:var(--red)}
+.toast .ta{margin-left:auto;flex:none;font:700 12px var(--fb);color:var(--gold-soft);padding:5px 9px;border-radius:7px;border:1px solid rgba(245,179,1,.4)}
+.toast .ta:hover{background:rgba(245,179,1,.12)}
+.toast.out{animation:tout .3s forwards}
+@keyframes tin{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+@keyframes tout{to{opacity:0;transform:translateX(30px)}}
+/* ---------- footer ---------- */
+footer{max-width:1280px;margin:26px auto 0;padding:24px 22px 34px;border-top:1px solid var(--line);text-align:center;color:var(--faint);font-size:12.5px}
+footer .fl{font:700 11px var(--fm);letter-spacing:.8px;color:var(--muted);margin-top:6px}
+#printRoot{display:none}
+/* ---------- responsive ---------- */
+@media(max-width:1120px){.duo,.classgrid,.aigrid{grid-template-columns:1fr}.orders{display:none}}
+@media(max-width:940px){
+.topbar{flex-wrap:wrap;gap:10px;padding:10px 14px}
+.tabs{order:3;width:100%;overflow-x:auto;margin:0}
+.top-right{margin-left:auto}
+main{padding:20px 14px 8px}
+.stats,.quarters{grid-template-columns:1fr 1fr}
+.khead{display:none}
+.krow.ga,.krow.gl{display:block;padding:12px 13px;border-bottom:1px solid var(--line)}
+.krow .kc{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:3px 0}
+.krow .kc::before{content:attr(data-l);font:600 10.5px var(--fb);text-transform:uppercase;letter-spacing:.5px;color:var(--faint);flex:none}
+.krow .kc.badge{flex-direction:row;align-items:center}
+.krow .kc.badge::before,.krow .kc.topic::before,.krow .kc.act::before{content:none}
+.krow .kc.topic{display:block}
+.krow .kc.act{justify-content:flex-end;border-top:1px dashed var(--line);margin-top:7px;padding-top:9px}
+.kc.objs{justify-content:flex-end}
+.catgrid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+.panel-head .btn.lg{width:100%}
+.f2{grid-template-columns:1fr}
+.ktoolbar{flex-direction:column;align-items:stretch}
+.ktoolbar .seg{width:100%}
+.kcount{text-align:right}
+.paper{padding:18px 14px}
+.doc-seal{width:60px;height:60px;font-size:13px;top:10px;right:10px}
+.brand-s{display:none}
+.mcard{padding:16px}
+.pgrid{grid-template-columns:1fr}
+}
+@media print{
+body{background:#fff!important}
+body>*{display:none!important}
+body>#printRoot{display:block!important}
+#printRoot .doc{min-width:0;font-size:12px}
+#printRoot .paper{box-shadow:none;background:#fff;padding:0}
+@page{size:A4;margin:14mm}
+}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i></div>
+
+<header class="topbar" id="topbar">
+  <div class="brand">
+    <span class="logo-badge" aria-hidden="true">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><defs><linearGradient id="lg1" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#3FD2EA"/><stop offset="1" stop-color="#FFD34D"/></linearGradient></defs><path d="M12 7.5C10 6 7 5.8 4 6.4v12.2c3-.6 6-.4 8 1.1 2-1.5 5-1.7 8-1.1V6.4c-3-.6-6-.4-8 1.1z" stroke="url(#lg1)" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 7.5v12.2" stroke="url(#lg1)" stroke-width="1.7"/><path d="M12 1.6l.9 2.3 2.3.9-2.3.9-.9 2.3-.9-2.3-2.3-.9 2.3-.9.9-2.3z" fill="#FFD34D"/></svg>
+    </span>
+    <div>
+      <div class="brand-t">Smart <em>Teacher</em></div>
+      <div class="brand-s" data-i18n="brandSub">Мұғалімнің цифрлық көмекшісі</div>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Smart Teacher">
+    <button class="tab" role="tab" data-act="tab" data-tab="qmj"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-2-1.5-5-1.5-8-1v14c3-.5 6-.5 8 1 2-1.5 5-1.5 8-1V5c-3-.5-6-.5-8 1z"/><path d="M12 6v14"/></svg><span data-i18n="tabQmj">ҚМЖ Генераторы</span><span class="ob">№130</span></button>
+    <button class="tab" role="tab" data-act="tab" data-tab="assess"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2.8h6V4M9 12l2 2 4-4"/></svg><span data-i18n="tabAssess">БЖБ / ТЖБ Құрастырушы</span><span class="ob">№110</span></button>
+    <button class="tab" role="tab" data-act="tab" data-tab="class"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20v-.8a6.5 6.5 0 0113 0v.8M16 4.6a3.5 3.5 0 010 6.8M21.5 20v-.8a5.5 5.5 0 00-4-5.3"/></svg><span data-i18n="tabClass">Сынып менеджменті</span></button>
+    <button class="tab" role="tab" data-act="tab" data-tab="ai"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l1.7 4.6L18.3 10l-4.6 1.7L12 16.3l-1.7-4.6L5.7 10l4.6-1.4L12 4z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2z"/></svg><span data-i18n="tabAi">ЖИ Промпттар &amp; Паспорт</span><span class="ob">№110</span></button>
+  </nav>
+  <div class="top-right">
+    <span class="orders">№110 • №130 • №472</span>
+    <div class="lang" role="group" aria-label="Language">
+      <button data-act="lang" data-lang="kz" class="on">🇰🇿 KZ</button>
+      <button data-act="lang" data-lang="ru">🇷🇺 RU</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ==================== БЖБ / ТЖБ ==================== -->
+<section class="panel active" id="p-assess" role="tabpanel">
+  <div class="panel-head rise" style="--d:.02s">
+    <div>
+      <div class="eyebrow"><span data-i18n="aEyebrow">№110 бұйрық негізінде • Жиынтық бағалау</span></div>
+      <h1><span data-i18n="aTitle1">БЖБ / ТЖБ</span> <span class="hl" data-i18n="aTitle2">Құрастырушы</span></h1>
+      <p class="lead" data-i18n="aLead">№110 бұйрық талаптарына сай бағалау критерийі, тапсырма және дескрипторлар кестесін жасайды. КТЖ-ны Excel, Word немесе PDF форматта жүктеңіз — БЖБ мен ТЖБ автоматты түрде анықталып, сараланады.</p>
+    </div>
+    <button class="btn gold lg pulse" data-act="add-ktp" id="btnAddKtp"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span data-i18n="aAddKtp">Күнтізбелік тақырыптық жоспарды қосу</span></button>
+  </div>
+
+  <div id="ktpZone" class="rise" style="--d:.08s"></div>
+
+  <div class="duo">
+    <form class="card rise" style="--d:.14s" id="formB" autocomplete="off">
+      <div class="card-h">
+        <h3 data-i18n="aFormTitle">Жиынтық бағалау параметрлері</h3>
+        <span class="spacer"></span>
+        <button type="button" class="btn ghost sm" data-act="sample-b"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21L21 6l-3-3L3 18l3 3z"/><path d="M14 7l3 3"/></svg><span data-i18n="fillSample">Үлгіні толтыру</span></button>
+      </div>
+      <div id="linkChip"></div>
+      <div class="field"><span class="lbl" data-i18n="aType">Бағалау түрі</span>
+        <div class="seg" role="radiogroup">
+          <label><input type="radio" name="btype" value="BJB" checked><span data-i18n="typeB">БЖБ / СОР</span></label>
+          <label><input type="radio" name="btype" value="TJB"><span data-i18n="typeT">ТЖБ / СОЧ</span></label>
+        </div>
+      </div>
+      <div class="f2">
+        <div class="field"><label class="lbl" for="bSubject" data-i18n="subject">Пән атауы</label><select class="inp" id="bSubject"></select></div>
+        <div class="field"><label class="lbl" for="bGrade" data-i18n="grade">Сынып</label><select class="inp" id="bGrade"></select></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label class="lbl" for="bQuarter" data-i18n="quarter">Тоқсан / Четверть</label><select class="inp" id="bQuarter"></select></div>
+        <div class="field"><label class="lbl" for="bLevel" data-i18n="level">Ойлау дағдыларының деңгейі</label><select class="inp" id="bLevel"></select></div>
+      </div>
+      <div class="field"><label class="lbl" for="bPub" data-i18n="publisher">Кітап баспасын таңдау</label><select class="inp" id="bPub"></select></div>
+      <div class="field"><label class="lbl" for="bBook" data-i18n="book">Пән бойынша кітапты таңдау</label><select class="inp" id="bBook"></select>
+        <div style="margin-top:6px"><a href="https://okulyk.kz/" target="_blank" rel="noopener" style="font-size:12px" data-i18n="okulykLink">okulyk.kz сайтынан оқулықты ашу ↗</a></div>
+      </div>
+      <div class="field"><label class="lbl" for="bTopic"><span data-i18n="topicUnit">Бөлім немесе тақырып</span><span class="req">*</span></label><input class="inp" id="bTopic" data-i18n-ph="topicPh" placeholder="Мысалы: Компьютерлік графика"></div>
+      <div class="field"><label class="lbl" for="bSection" data-i18n="section">Бөлім (ҰМЖ бойынша)</label><input class="inp" id="bSection" data-i18n-ph="sectionPh" placeholder="Ұзақ мерзімді жоспар бөлімі"></div>
+      <div class="field"><label class="lbl" for="bObj" data-i18n="objectives">Оқу мақсаттары (кодтары)</label><input class="inp" id="bObj" placeholder="7.2.1.1, 7.2.2.1" style="font-family:var(--fm);font-size:13px"></div>
+      <div class="f2">
+        <div class="field"><span class="lbl" data-i18n="maxScore">Максималды балл</span>
+          <div class="stepper"><button type="button" class="st-btn" data-act="step" data-t="bMax" data-d="-1">−</button><input class="inp" type="number" id="bMax" value="10" min="5" max="40" step="1"><button type="button" class="st-btn" data-act="step" data-t="bMax" data-d="1">+</button></div>
+        </div>
+        <div class="field"><span class="lbl" data-i18n="timeMin">Орындау уақыты (мин)</span>
+          <div class="stepper"><button type="button" class="st-btn" data-act="step" data-t="bTime" data-d="-1">−</button><input class="inp" type="number" id="bTime" value="20" min="10" max="90" step="5"><button type="button" class="st-btn" data-act="step" data-t="bTime" data-d="1">+</button></div>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button type="button" class="btn teal" data-act="build-b" style="flex:1"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21L21 6l-3-3L3 18l3 3z"/><path d="M14 7l3 3"/></svg><span data-i18n="aBuild">Тапсырма мен дескриптор жасау</span></button>
+      </div>
+    </form>
+
+    <div class="card output rise" style="--d:.2s" id="outB">
+      <div class="card-h">
+        <h3 data-i18n="aOutTitle">Бағалау тапсырмасы мен дескриптор</h3>
+        <span class="badge110">№110</span><span class="chip gold" id="docBCount" hidden></span>
+        <span class="spacer"></span>
+        <button class="btn ghost sm" data-act="copy-b" id="bCopy" disabled><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg><span data-i18n="copy">Көшіру</span></button>
+        <button class="btn ghost sm" data-act="word-b" id="bWord" disabled><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg><span data-i18n="wordDl">Word (.doc)</span></button>
+        <button class="btn ghost sm" data-act="pdf-b" id="bPdf" disabled><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg><span data-i18n="pdfDl">PDF</span></button>
+      </div>
+      <div id="docBWrap"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ҚМЖ ==================== -->
+<section class="panel" id="p-qmj" role="tabpanel">
+  <div class="panel-head rise" style="--d:.02s">
+    <div>
+      <div class="eyebrow"><span data-i18n="qEyebrow">Күнделікті жоспарлау • №130 / №110 / №472</span></div>
+      <h1><span data-i18n="qTitle1">ҚМЖ</span> <span class="hl" data-i18n="qTitle2">Генераторы</span></h1>
+      <p class="lead" data-i18n="qLead">Таңдалған бұйрық талаптарына сәйкес қысқа мерзімді жоспар құрылымы автоматты түрде жасалады.</p>
+    </div>
+  </div>
+  <div class="duo">
+    <form class="card rise" style="--d:.08s" id="formQ" autocomplete="off">
+      <div class="card-h">
+        <h3 data-i18n="qFormTitle">ҚМЖ деректерін енгізу</h3><span class="spacer"></span>
+        <button type="button" class="btn ghost sm" data-act="sample-q"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21L21 6l-3-3L3 18l3 3z"/><path d="M14 7l3 3"/></svg><span data-i18n="fillSample">Үлгіні толтыру</span></button>
+      </div>
+      <div class="field"><label class="lbl" for="qOrder" data-i18n="qOrder">Нормативтік бұйрықты таңдау</label><select class="inp" id="qOrder"></select></div>
+      <div class="f2">
+        <div class="field"><label class="lbl" for="qSubject" data-i18n="subject">Пән атауы</label><select class="inp" id="qSubject"></select></div>
+        <div class="field"><label class="lbl" for="qGrade" data-i18n="grade">Сынып</label><select class="inp" id="qGrade"></select></div>
+      </div>
+      <div class="field"><label class="lbl" for="qPub" data-i18n="publisher">Кітап баспасын таңдау</label><select class="inp" id="qPub"></select></div>
+      <div class="field"><label class="lbl" for="qBook" data-i18n="book">Пән бойынша кітапты таңдау</label><select class="inp" id="qBook"></select>
+        <div style="margin-top:6px"><a href="https://okulyk.kz/" target="_blank" rel="noopener" style="font-size:12px" data-i18n="okulykLink">okulyk.kz сайтынан оқулықты ашу ↗</a></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label class="lbl" for="qTeacher" data-i18n="teacher">Педагогтің аты-жөні</label><input class="inp" id="qTeacher" placeholder="Айгүл Серікқызы"></div>
+        <div class="field"><label class="lbl" for="qDate" data-i18n="date">Күні</label><input class="inp" id="qDate" style="font-family:var(--fm);font-size:13px"></div>
+      </div>
+      <div class="field"><label class="lbl" for="qSection" data-i18n="section">Бөлім (ҰМЖ бойынша)</label><input class="inp" id="qSection" data-i18n-ph="sectionPh" placeholder="Ұзақ мерзімді жоспар бөлімі"></div>
+      <div class="field"><label class="lbl" for="qTopic"><span data-i18n="lessonTopic">Сабақ тақырыбы</span><span class="req">*</span></label><input class="inp" id="qTopic" data-i18n-ph="lessonTopicPh" placeholder="Сабақ тақырыбын жазыңыз"></div>
+      <div class="field"><label class="lbl" for="qObj" data-i18n="qObj">Оқу мақсаты (оқу бағдарламасына сәйкес)</label><input class="inp" id="qObj" placeholder="7.2.1.1 – ..."></div>
+      <div class="field"><label class="lbl" for="qLen" data-i18n="qLen">Сабақ ұзақтығы</label><select class="inp" id="qLen"><option value="40">40 мин</option><option value="45" selected>45 мин</option></select></div>
+      <div class="btnrow"><button type="button" class="btn teal" data-act="build-q" style="flex:1"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21L21 6l-3-3L3 18l3 3z"/><path d="M14 7l3 3"/></svg><span data-i18n="qBuild">ҚМЖ құрастыру</span></button></div>
+    </form>
+    <div class="card output rise" style="--d:.14s" id="outQ">
+      <div class="card-h">
+        <h3 data-i18n="qOutTitle">Дайын ҚМЖ құжаты</h3><span class="badge110" id="qOrderBadge">№130</span><span class="spacer"></span>
+        <button class="btn ghost sm" data-act="copy-q" id="qCopy" disabled><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg><span data-i18n="copy">Көшіру</span></button>
+        <button class="btn ghost sm" data-act="word-q" id="qWord" disabled><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg><span data-i18n="wordDl">Word (.doc)</span></button>
+        <button class="btn ghost sm" data-act="pdf-q" id="qPdf" disabled><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg><span data-i18n="pdfDl">PDF</span></button>
+      </div>
+      <div id="docQWrap"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== Сынып ==================== -->
+<section class="panel" id="p-class" role="tabpanel">
+  <div class="panel-head rise" style="--d:.02s">
+    <div>
+      <div class="eyebrow"><span data-i18n="cEyebrow">Әділ бағалау • Барлық оқушыны тарту</span></div>
+      <h1><span data-i18n="cTitle1">Сынып</span> <span class="hl" data-i18n="cTitle2">менеджменті</span></h1>
+      <p class="lead" data-i18n="cLead">Кездейсоқ оқушыны таңдау, шағын топтарға бөлу және әділдік циклі — бір сабақта барлық оқушы жауап береді.</p>
+    </div>
+  </div>
+  <div class="classgrid">
+    <div class="card rise" style="--d:.08s">
+      <div class="card-h">
+        <h3 data-i18n="cListTitle">Сынып тізімі</h3><span class="chip mono" id="rCount">0</span><span class="spacer"></span>
+        <button class="btn ghost sm" data-act="roster-xlsx"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L8 8m4-4l4 4M4 20h16"/></svg><span data-i18n="cUpload">Excel жүктеу</span></button>
+        <button class="btn ghost sm" data-act="roster-sample"><span data-i18n="cSample">Үлгі тізімді толтыру</span></button>
+      </div>
+      <p style="font-size:12.5px;color:var(--faint);margin-bottom:10px" data-i18n="cListHint">Әр оқушының аты-жөнін жаңа жолдан жазыңыз немесе Excel (.xlsx, .xls, .csv) файлынан жүктеңіз.</p>
+      <textarea class="inp" id="roster" rows="11" data-i18n-ph="cPh" placeholder="Айдана Нұрланқызы&#10;Әлихан Серікұлы&#10;..."></textarea>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="card pickcard rise" style="--d:.14s">
+        <div class="eyebrow" style="justify-content:center"><span data-i18n="cPickTitle">Тақтаға шығатын / жауап беретін оқушы</span></div>
+        <div class="pick-name" id="pickName">—</div>
+        <button class="btn gold lg" data-act="pick" id="btnPick"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg><span data-i18n="cPickBtn">Кездейсоқ оқушыны таңдау</span></button>
+        <div class="pickmeta">
+          <label class="sw"><input type="checkbox" id="fairTgl" checked><span class="tr"></span><span data-i18n="cFair">Әділ режим: қайталау жоқ</span></label>
+          <span class="chip mono" id="pickProg">0/0</span>
+          <div class="prog" id="progWrap"><i id="progBar" style="width:0%"></i></div>
+          <button class="btn ghost sm" data-act="cycle-reset"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-3-6.7"/><path d="M21 3v6h-6"/></svg><span data-i18n="cReset">Циклді жаңарту</span></button>
+        </div>
+        <div class="hist" id="pickHist"></div>
+      </div>
+      <div class="card rise" style="--d:.2s">
+        <div class="card-h">
+          <h3 data-i18n="cGroupsTitle">Құрылған шағын топтар</h3><span class="spacer"></span>
+          <select class="inp" id="groupN" style="width:auto"></select>
+          <button class="btn teal sm" data-act="split"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg><span data-i18n="cSplit">Топтарға бөлу</span></button>
+          <button class="btn ghost sm" data-act="copy-groups" id="btnGCopy" disabled><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg><span data-i18n="copy">Көшіру</span></button>
+        </div>
+        <div id="groupsWrap"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ЖИ & Паспорт ==================== -->
+<section class="panel" id="p-ai" role="tabpanel">
+  <div class="panel-head rise" style="--d:.02s">
+    <div>
+      <div class="eyebrow"><span data-i18n="pEyebrow">№110 бұйрық • Цифрлық құзыреттілік</span></div>
+      <h1><span data-i18n="pTitle1">ЖИ Промпттар</span> <span class="hl" data-i18n="pTitle2">&amp; Паспорт</span></h1>
+      <p class="lead" data-i18n="pLead">Мұғалімге арналған дайын ChatGPT / Gemini промпттар жинағы, жоба паспорты және электрондық оқулықтар каталогы.</p>
+    </div>
+  </div>
+  <div class="aigrid">
+    <div class="card rise" style="--d:.08s">
+      <div class="card-h">
+        <h3 data-i18n="passTitle">«Smart Teacher» цифрлық білім беру ресурсының паспорты</h3><span class="badge110">№110</span><span class="spacer"></span>
+        <button class="btn ghost sm" data-act="copy-passport"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg><span data-i18n="passCopy">Паспорт мәтінін көшіру</span></button>
+      </div>
+      <p style="font-size:12px;color:var(--faint);margin-bottom:6px" data-i18n="passSub">ҚР Оқу-ағарту министрінің №110 бұйрығы бойынша</p>
+      <div id="passportBody"></div>
+    </div>
+    <div class="card rise" style="--d:.14s">
+      <div class="card-h"><h3 data-i18n="catTitle">Электрондық оқулықтар каталогы (okulyk.kz)</h3>
+        <span class="sub" data-i18n="catSub">ҚР ресми баспалары бойынша электрондық оқулықтарды жылдам іздеу және ашу</span>
+      </div>
+      <div class="catgrid">
+        <div class="field"><label class="lbl" for="catPub" data-i18n="publisher">Кітап баспасын таңдау</label><select class="inp" id="catPub"></select></div>
+        <div class="field"><label class="lbl" for="catSubject" data-i18n="subject">Пән атауы</label><select class="inp" id="catSubject"></select></div>
+        <div class="field"><label class="lbl" for="catGrade" data-i18n="grade">Сынып</label><select class="inp" id="catGrade"></select></div>
+      </div>
+      <div class="catinfo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-2-1.5-5-1.5-8-1v14c3-.5 6-.5 8 1 2-1.5 5-1.5 8-1V5c-3-.5-6-.5-8 1z"/><path d="M12 6v14"/></svg><span id="catInfo"></span></div>
+      <a class="btn gold" href="https://okulyk.kz/" target="_blank" rel="noopener" style="width:100%"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4L10 14M20 14v6H4V4h6"/></svg><span data-i18n="catOpen">okulyk.kz сайтынан оқулықты ашу</span></a>
+    </div>
+  </div>
+  <div class="card rise" style="--d:.2s">
+    <div class="card-h"><h3 data-i18n="prTitle">Мұғалімге арналған дайын ЖИ-промпттар жинағы</h3><span class="chip gold">ChatGPT / Gemini</span></div>
+    <div class="pfilters" id="promptFilters"></div>
+    <div class="pgrid" id="promptGrid"></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div data-i18n="fLine1">© 2025 Smart Teacher — Педагогтердің цифрлық құзыреттілігін дамытуға арналған интерактивті прототип</div>
+  <div class="fl">KZ / RU Bilingual • №110, №130, №472</div>
+  <div style="margin-top:8px" class="priv"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg><span data-i18n="privacy">Барлық файлдар тек браузеріңізде өңделеді — деректер серверге жіберілмейді.</span></div>
+</footer>
+
+<!-- ==================== KTP modal ==================== -->
+<div class="modal" id="mKtp" role="dialog" aria-modal="true" aria-labelledby="mKtpTitle">
+  <div class="mscrim" data-act="close-modal" data-m="mKtp"></div>
+  <div class="mcard">
+    <div class="mhead">
+      <div><h3 id="mKtpTitle" data-i18n="mTitle">Күнтізбелік тақырыптық жоспарды қосу</h3><p data-i18n="mSub">Excel, Word немесе PDF файл жүктеңіз — БЖБ / ТЖБ автоматты түрде анықталады</p></div>
+      <button class="btn ghost ibtn x" data-act="close-modal" data-m="mKtp" aria-label="Close"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="seg" id="mTabs">
+      <button data-act="mtab" data-v="file" class="on"><span data-i18n="mTabFile">Файл жүктеу</span></button>
+      <button data-act="mtab" data-v="text"><span data-i18n="mTabText">Мәтінді қою</span></button>
+    </div>
+    <div id="mFile">
+      <div class="dz" id="dz" data-act="choose-file" role="button" tabindex="0">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L8 8m4-4l4 4M4 20h16"/></svg>
+        <h4 data-i18n="dzTitle">Файлды осы аймаққа тастаңыз немесе басыңыз</h4>
+        <p data-i18n="dzHint">.xlsx, .xls, .csv • .docx, .doc • .pdf — 15 МБ дейін</p>
+        <div class="fchips">
+          <span class="fchip"><i style="background:var(--green)"></i>Excel</span>
+          <span class="fchip"><i style="background:var(--blue)"></i>Word</span>
+          <span class="fchip"><i style="background:var(--red)"></i>PDF</span>
+        </div>
+      </div>
+      <div class="mrow" style="justify-content:space-between">
+        <button class="btn ghost sm" data-act="demo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l1.7 4.6L18.3 10l-4.6 1.7L12 16.3l-1.7-4.6L5.7 10l4.6-1.4L12 4z"/></svg><span data-i18n="demoBtn">Демо КТЖ жүктеу (7-сынып, Информатика)</span></button>
+      </div>
+    </div>
+    <div id="mText" hidden>
+      <div class="field" style="margin-top:14px"><textarea class="inp" id="kText" rows="9" data-i18n-ph="mTextPh" placeholder="КТЖ жолдарын осында қойыңыз..."></textarea></div>
+      <div class="mrow" style="justify-content:space-between">
+        <button class="btn ghost sm" data-act="text-sample"><span data-i18n="mTextSample">Мысал мәтін</span></button>
+        <button class="btn teal sm" data-act="parse-text"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21L21 6l-3-3L3 18l3 3z"/><path d="M14 7l3 3"/></svg><span data-i18n="mTextBtn">Мәтінді талдау</span></button>
+      </div>
+    </div>
+    <div id="mBusy" hidden>
+      <div class="busy">
+        <div class="spin"></div>
+        <ul class="steps">
+          <li id="bs1"><span class="st"></span><span data-i18n="step1">Файл оқылуда…</span></li>
+          <li id="bs2"><span class="st"></span><span data-i18n="step2">Мәтін мен кестелер алынуда…</span></li>
+          <li id="bs3"><span class="st"></span><span data-i18n="step3">БЖБ / ТЖБ автоматты іздеу…</span></li>
+        </ul>
+      </div>
+    </div>
+    <div id="mErr" hidden>
+      <div class="merr"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4M12 17.5v.5"/></svg><span id="mErrMsg"></span></div>
+      <div class="mrow"><button class="btn ghost sm" data-act="mtab" data-v="file"><span data-i18n="mRetry">Басқа файл таңдау</span></button><button class="btn ghost sm" data-act="demo"><span data-i18n="demoShort">Демо КТЖ жүктеу</span></button></div>
+    </div>
+    <div class="mfoot"><span class="priv"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg><span data-i18n="privacy">Барлық файлдар тек браузеріңізде өңделеді — деректер серверге жіберілмейді.</span></span></div>
+  </div>
+</div>
+
+<!-- ==================== Edit assessment modal ==================== -->
+<div class="modal" id="mEdit" role="dialog" aria-modal="true">
+  <div class="mscrim" data-act="close-modal" data-m="mEdit"></div>
+  <div class="mcard" style="width:min(520px,100%)">
+    <div class="mhead">
+      <div><h3 id="eTitle">Бағалауды өңдеу</h3><p data-i18n="eSub">Деректерді нақтылаңыз — спецификация осы мәндер бойынша жасалады</p></div>
+      <button class="btn ghost ibtn x" data-act="close-modal" data-m="mEdit" aria-label="Close"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="f2">
+      <div class="field"><label class="lbl" for="eType" data-i18n="aType">Бағалау түрі</label><select class="inp" id="eType"><option value="BJB">БЖБ / СОР</option><option value="TJB">ТЖБ / СОЧ</option></select></div>
+      <div class="field"><span class="lbl" data-i18n="eNum">Реттік нөмірі</span><div class="stepper"><button type="button" class="st-btn" data-act="step" data-t="eNum" data-d="-1">−</button><input class="inp" type="number" id="eNum" value="1" min="1" max="12" step="1"><button type="button" class="st-btn" data-act="step" data-t="eNum" data-d="1">+</button></div></div>
+    </div>
+    <div class="f2">
+      <div class="field"><label class="lbl" for="eQuarter" data-i18n="quarter">Тоқсан</label><select class="inp" id="eQuarter"></select></div>
+      <div class="field"><label class="lbl" for="eDate" data-i18n="date">Күні</label><input class="inp" id="eDate" placeholder="15.10.2026" style="font-family:var(--fm);font-size:13px"></div>
+    </div>
+    <div class="field"><label class="lbl" for="eTopic"><span data-i18n="topicUnit">Бөлім немесе тақырып</span><span class="req">*</span></label><input class="inp" id="eTopic"></div>
+    <div class="f2">
+      <div class="field"><label class="lbl" for="eObj" data-i18n="objectives">Оқу мақсаттары (кодтары)</label><input class="inp" id="eObj" placeholder="7.2.1.1, 7.2.2.1" style="font-family:var(--fm);font-size:13px"></div>
+      <div class="field"><span class="lbl" data-i18n="hours">Сағат саны</span><div class="stepper"><button type="button" class="st-btn" data-act="step" data-t="eHours" data-d="-1">−</button><input class="inp" type="number" id="eHours" value="1" min="1" max="4" step="1"><button type="button" class="st-btn" data-act="step" data-t="eHours" data-d="1">+</button></div></div>
+    </div>
+    <div class="btnrow" style="justify-content:flex-end">
+      <button class="btn ghost" data-act="close-modal" data-m="mEdit"><span data-i18n="cancel">Болдырмау</span></button>
+      <button class="btn gold" data-act="save-edit"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg><span data-i18n="save">Сақтау</span></button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts" aria-live="polite"></div>
+<div id="printRoot"></div>
+<input type="file" id="fileKtp" accept=".xlsx,.xls,.csv,.doc,.docx,.pdf" hidden>
+<input type="file" id="fileRoster" accept=".xlsx,.xls,.csv" hidden>
+<noscript><div style="padding:30px;text-align:center">Smart Teacher жұмысы үшін JavaScript қажет. / Для работы Smart Teacher необходим JavaScript.</div></noscript>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+'use strict';
+/* ============ helpers ============ */
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const uid=()=> 'id'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const uniq=a=>Array.from(new Set(a));
+const debounce=(fn,ms)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}};
+const pad=n=>String(n).padStart(2,'0');
+const fmtD=d=>pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear();
+const today=()=>fmtD(new Date());
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const IC=(p,f)=>'<svg class="ic" viewBox="0 0 24 24" fill="'+(f?'currentColor':'none')+'" stroke="'+(f?'none':'currentColor')+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';
+const ICONS={
+plus:IC('<path d="M12 5v14M5 12h14"/>'),
+upload:IC('<path d="M12 16V4m0 0L8 8m4-4l4 4M4 20h16"/>'),
+x:IC('<path d="M6 6l12 12M18 6L6 18"/>'),
+check:IC('<path d="M5 13l4 4L19 7"/>'),
+copy:IC('<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/>'),
+dl:IC('<path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/>'),
+print:IC('<path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="7"/>'),
+trash:IC('<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>'),
+pen:IC('<path d="M4 20l4-1L20 7l-3-3L5 16l-1 4z"/>'),
+search:IC('<circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/>'),
+cal:IC('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>'),
+clock:IC('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>'),
+book:IC('<path d="M12 6c-2-1.5-5-1.5-8-1v14c3-.5 6-.5 8 1 2-1.5 5-1.5 8-1V5c-3-.5-6-.5-8 1z"/><path d="M12 6v14"/>'),
+shield:IC('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/>'),
+alert:IC('<path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4M12 17.5v.5"/>'),
+info:IC('<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.5"/>'),
+refresh:IC('<path d="M21 12a9 9 0 11-3-6.7"/><path d="M21 3v6h-6"/>'),
+wand:IC('<path d="M6 21L21 6l-3-3L3 18l3 3z"/><path d="M14 7l3 3"/>'),
+spark:IC('<path d="M12 4l1.7 4.6L18.3 10l-4.6 1.7L12 16.3l-1.7-4.6L5.7 10l4.6-1.4L12 4z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2z"/>'),
+target:IC('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/>'),
+layers:IC('<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13.5l9 5 9-5"/>'),
+link:IC('<path d="M14 4h6v6M20 4L10 14M20 14v6H4V4h6"/>'),
+users:IC('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20v-.8a6.5 6.5 0 0113 0v.8M16 4.6a3.5 3.5 0 010 6.8M21.5 20v-.8a5.5 5.5 0 00-4-5.3"/>'),
+chart:IC('<path d="M5 20v-8M12 20V6M19 20v-11M3 20h18"/>')
+};
+/* ============ i18n ============ */
+const I18N={
+kz:{
+brandSub:'Мұғалімнің цифрлық көмекшісі',tabQmj:'ҚМЖ Генераторы',tabAssess:'БЖБ / ТЖБ Құрастырушы',tabClass:'Сынып менеджменті',tabAi:'ЖИ Промпттар & Паспорт',
+aEyebrow:'№110 бұйрық негізінде • Жиынтық бағалау',aTitle1:'БЖБ / ТЖБ',aTitle2:'Құрастырушы',
+aLead:'№110 бұйрық талаптарына сай бағалау критерийі, тапсырма және дескрипторлар кестесін жасайды. КТЖ-ны Excel, Word немесе PDF форматта жүктеңіз — БЖБ мен ТЖБ автоматты түрде анықталып, сараланады.',
+aAddKtp:'Күнтізбелік тақырыптық жоспарды қосу',aFormTitle:'Жиынтық бағалау параметрлері',aOutTitle:'Бағалау тапсырмасы мен дескриптор',
+aType:'Бағалау түрі',typeB:'БЖБ / СОР',typeT:'ТЖБ / СОЧ',subject:'Пән атауы',grade:'Сынып',quarter:'Тоқсан / Четверть',level:'Ойлау дағдыларының деңгейі',
+lvlMix:'Аралас (барлық деңгей)',lvl0:'Білу және түсіну',lvl1:'Қолдану',lvl2:'Жоғары деңгей дағдылары',
+publisher:'Кітап баспасын таңдау',book:'Пән бойынша кітапты таңдау',okulykLink:'okulyk.kz сайтынан оқулықты ашу ↗',
+topicUnit:'Бөлім немесе тақырып',topicPh:'Мысалы: Компьютерлік графика',section:'Бөлім (ҰМЖ бойынша)',sectionPh:'Ұзақ мерзімді жоспар бөлімі',
+objectives:'Оқу мақсаттары (кодтары)',maxScore:'Максималды балл',timeMin:'Орындау уақыты (мин)',aBuild:'Тапсырма мен дескриптор жасау',
+fillSample:'Үлгіні толтыру',copy:'Көшіру',wordDl:'Word (.doc) жүктеу',pdfDl:'PDF жүктеу',excelDl:'Excel жүктеу',cancel:'Болдырмау',save:'Сақтау',date:'Күні',hours:'Сағат саны',
+qN:'{n}-тоқсан',gN:'{n}-сынып',hShort:'сағ',min:'мин',pts:'балл',all:'Барлығы',qAll:'Барлық тоқсан',
+aEmptyT:'Тапсырма әлі құрастырылмады',aEmptyP:'Тақырып пен ойлау деңгейін таңдап, бағалау критерийі мен дескрипторлар кестесін автоматты түрде алыңыз — немесе КТЖ тізімінен «Құрастыру» батырмасын басыңыз.',
+kEmptyT:'Күнтізбелік-тақырыптық жоспар жүктелмеген',kEmptyP:'КТЖ файлын қосыңыз — жүйе БЖБ мен ТЖБ-ны автоматты түрде тауып, тоқсандар бойынша саралайды, оқу мақсаттары мен күндерін анықтайды.',
+demoBtn:'Демо КТЖ жүктеу (7-сынып, Информатика)',demoShort:'Демо КТЖ жүктеу',privacy:'Барлық файлдар тек браузеріңізде өңделеді — деректер серверге жіберілмейді.',
+mTitle:'Күнтізбелік тақырыптық жоспарды қосу',mSub:'Excel, Word немесе PDF файл жүктеңіз — БЖБ / ТЖБ автоматты түрде анықталады',
+mTabFile:'Файл жүктеу',mTabText:'Мәтінді қою',dzTitle:'Файлды осы аймаққа тастаңыз немесе басыңыз',dzHint:'.xlsx, .xls, .csv • .docx, .doc • .pdf — 15 МБ дейін',
+mTextPh:'КТЖ жолдарын осында қойыңыз. Мысалы:\n1-тоқсан\n12 | 15.10.2026 | БЖБ №1. «Графика» бөлімі бойынша | 7.2.1.1 | 1',
+mTextSample:'Мысал мәтін',mTextBtn:'Мәтінді талдау',mRetry:'Басқа файл таңдау',
+step1:'Файл оқылуда…',step2:'Мәтін мен кестелер алынуда…',step3:'БЖБ / ТЖБ автоматты іздеу…',
+errFormat:'Қолдау таппайтын формат. Excel (.xlsx, .xls, .csv), Word (.docx, .doc) немесе PDF (.pdf) жүктеңіз.',
+errSize:'Файл 15 МБ-тан үлкен. Кішірек файл жүктеңіз.',
+errEmpty:'БЖБ / ТЖБ белгілері табылмады. Құжатта «БЖБ», «ТЖБ», «СОР», «СОЧ» немесе «жиынтық бағалау» жолдары бар екенін тексеріңіз, немесе мәтінді қойып көріңіз.',
+errLib:'Қажетті кітапхана жүктелмеді (интернет байланысын тексеріңіз). «Мәтінді қою» тәсілін немесе демо КТЖ-ны пайдаланыңыз.',
+errDoc:'Ескі .doc форматы толық оқылмады. Файлды Word-та .docx ретінде қайта сақтап жүктеңіз немесе мәтінді қойыңыз.',
+docWarn:'Ескі .doc форматы ішінара оқылды — нәтижені тексеріңіз.',
+kSuccess:'Талдау аяқталды: {b} БЖБ, {t} ТЖБ анықталды',kDemoLoaded:'Демо КТЖ жүктелді — өз файлыңызды қосып көріңіз',
+kStatL:'Сабақтар',kStatB:'БЖБ анықталды',kStatT:'ТЖБ анықталды',kStatQ:'Тоқсандар',yearTitle:'Оқу жылының шолуы — тоқсандар бойынша сараланған',
+viewA:'Бағалаулар',viewAll:'Толық жоспар',searchPh:'Тақырып, бөлім, код бойынша іздеу…',rowsN:'{n} жазба',rowsWord:'жол',
+thType:'Түрі',thTopic:'Тақырып / бөлім',thObj:'Оқу мақсаттары',thQ:'Тоқсан',thDate:'Күні / сағат',thAct:'Әрекет',thNum:'№',thHours:'Сағат',
+build:'Құрастыру',edit:'Өңдеу',del:'Жою',packBtn:'Барлығын құрастыру',packBuilt:'{n} спецификация №110 үлгісімен жасалды',
+replace:'Файлды ауыстыру',remove:'КТЖ-ны жою',kRemoved:'КТЖ жойылды',undo:'Қайтару',restored:'Қалпына келтірілді',
+manualAdd:'Қолмен қосу',manual:'қолмен',warnN:'{n} жол толық танылмады — нәтижені тексеріңіз',noRows:'Сүзгі бойынша нәтиже жоқ',
+eEditT:'Бағалауды өңдеу',eAddT:'Бағалауды қолмен қосу',eSub:'Деректерді нақтылаңыз — спецификация осы мәндер бойынша жасалады',eNum:'Реттік нөмірі',
+eSaved:'Бағалау сақталды',eDeleted:'Бағалау жойылды',topicReq:'Тақырыпты толтырыңыз',exported:'{n} жол экспортталды',
+builtT:'Спецификация №110 үлгісімен жасалды',fromKtp:'КТЖ-дан құрастырылды',linked:'КТЖ-дан',specCount:'{n} спецификация',
+specTitleB:'Бөлім бойынша жиынтық бағалау спецификациясы',specTitleT:'Тоқсан бойынша жиынтық бағалау спецификациясы',packTitle:'Жиынтық бағалау спецификацияларының жинағы',
+ministry:'ҚР Оқу-ағарту министрінің №110 бұйрығына сәйкес',seal:'бұйрық',
+mP:'Пән',mG:'Сынып',mQ:'Тоқсан',mTopic:'Бөлім / тақырып',mObj:'Оқу мақсаттары',mTime:'Орындау уақыты',mMax:'Максималды балл',mBook:'Оқулық',
+thCrit:'Бағалау критерийі',thLvl:'Ойлау дағдысының деңгейі',thTask:'Тапсырма',thDesc:'Дескриптор',thPts:'Балл',total:'Жиыны',
+lvSplit:'Деңгейлер бойынша бөлініс',unitWord:'бөлімі бойынша',unitFb:'№{n} бөлім бойынша жиынтық бағалау',termFb:'{q}-тоқсан бойынша жиынтық бағалау',
+ktpExportT:'Күнтізбелік-тақырыптық жоспар (талдау нәтижесі)',lesson:'Сабақ',
+copied:'Мәтін алмасу буферіне көшірілді',wordDone:'Word файлы жүктелді',pdfHint:'PDF үшін басып шығару терезесі ашылды — «PDF ретінде сақтау» таңдаңыз',xlsDone:'Excel файлы жүктелді',
+qEyebrow:'Күнделікті жоспарлау • №130 / №110 / №472',qTitle1:'ҚМЖ',qTitle2:'Генераторы',qLead:'Таңдалған бұйрық талаптарына сәйкес қысқа мерзімді жоспар құрылымы автоматты түрде жасалады.',
+qFormTitle:'ҚМЖ деректерін енгізу',qOutTitle:'Дайын ҚМЖ құжаты',qOrder:'Нормативтік бұйрықты таңдау',ord110:'№110 бұйрық (ЖИ + цифрлық ресурстар)',ord472:'№472 бұйрық (бағалау талаптары)',ord130:'№130 (Стандарт)',
+teacher:'Педагогтің аты-жөні',lessonTopic:'Сабақ тақырыбы',lessonTopicPh:'Сабақ тақырыбын жазыңыз',qObj:'Оқу мақсаты (оқу бағдарламасына сәйкес)',qLen:'Сабақ ұзақтығы',qBuild:'ҚМЖ құрастыру',
+qEmptyT:'ҚМЖ әлі құрастырылмады',qEmptyP:'Сол жақтағы өрістерді толтырып «ҚМЖ құрастыру» батырмасын басыңыз немесе «Үлгіні толтыру» түймесін пайдаланыңыз.',qDone:'ҚМЖ құрастырылды',filled:'Үлгі деректер толтырылды',
+cEyebrow:'Әділ бағалау • Барлық оқушыны тарту',cTitle1:'Сынып',cTitle2:'менеджменті',cLead:'Кездейсоқ оқушыны таңдау, шағын топтарға бөлу және әділдік циклі — бір сабақта барлық оқушы жауап береді.',
+cListTitle:'Сынып тізімі',cUpload:'Excel жүктеу',cSample:'Үлгі тізімді толтыру',cListHint:'Әр оқушының аты-жөнін жаңа жолдан жазыңыз немесе Excel (.xlsx, .xls, .csv) файлынан жүктеңіз.',
+cPh:'Айдана Нұрланқызы\nӘлихан Серікұлы\n...',cPickTitle:'Тақтаға шығатын / жауап беретін оқушы',cPickBtn:'Кездейсоқ оқушыны таңдау',
+cFair:'Әділ режим: қайталау жоқ',cReset:'Циклді жаңарту',cGroupsTitle:'Құрылған шағын топтар',cSplit:'Топтарға бөлу',cGroupN:'{n} топ',
+cGroupsEmpty:'Оқушылар тізімін енгізіп, «Топтарға бөлу» батырмасын басыңыз',cNeed:'Алдымен сынып тізімін толтырыңыз',cCycle:'Барлық оқушы таңдалды — әділдік циклі жаңартылды',
+cUploaded:'{n} оқушы жүктелді',cToday:'Бүгін жауап бергендер',cCount:'{n} оқушы',team:'{n}-топ',
+pEyebrow:'№110 бұйрық • Цифрлық құзыреттілік',pTitle1:'ЖИ Промпттар',pTitle2:'& Паспорт',pLead:'Мұғалімге арналған дайын ChatGPT / Gemini промпттар жинағы, жоба паспорты және электрондық оқулықтар каталогы.',
+passTitle:'«Smart Teacher» цифрлық білім беру ресурсының паспорты',passSub:'ҚР Оқу-ағарту министрінің №110 бұйрығы бойынша',passCopy:'Паспорт мәтінін көшіру',
+catTitle:'Электрондық оқулықтар каталогы (okulyk.kz)',catSub:'ҚР ресми баспалары бойынша электрондық оқулықтарды жылдам іздеу және ашу',catOpen:'okulyk.kz сайтынан оқулықты ашу',catSel:'Таңдалған оқулық',
+prTitle:'Мұғалімге арналған дайын ЖИ-промпттар жинағы',fAll:'Барлығы',
+fLine1:'© 2025 Smart Teacher — Педагогтердің цифрлық құзыреттілігін дамытуға арналған интерактивті прототип',
+bookMain:'негізгі оқулық',bookAlt:'жаңартылған басылым',bookGuide:'Әдістемелік құрал'
+},
+ru:{
+brandSub:'Цифровой помощник учителя',tabQmj:'Генератор КСП',tabAssess:'Конструктор СОР / СОЧ',tabClass:'Менеджмент класса',tabAi:'ИИ-промпты и Паспорт',
+aEyebrow:'На основе приказа №110 • Суммативное оценивание',aTitle1:'БЖБ / ТЖБ',aTitle2:'Конструктор (СОР / СОЧ)',
+aLead:'Создаёт таблицу критериев оценивания, заданий и дескрипторов по требованиям приказа №110. Загрузите КТП в Excel, Word или PDF — СОР и СОЧ будут определены и рассортированы автоматически.',
+aAddKtp:'Добавить календарно-тематический план',aFormTitle:'Параметры суммативного оценивания',aOutTitle:'Задания и дескрипторы оценивания',
+aType:'Вид оценивания',typeB:'БЖБ / СОР',typeT:'ТЖБ / СОЧ',subject:'Предмет',grade:'Класс',quarter:'Четверть',level:'Уровень мыслительных навыков',
+lvlMix:'Смешанный (все уровни)',lvl0:'Знание и понимание',lvl1:'Применение',lvl2:'Навыки высокого порядка',
+publisher:'Выберите издательство',book:'Выберите книгу по предмету',okulykLink:'Открыть учебник на okulyk.kz ↗',
+topicUnit:'Раздел или тема',topicPh:'Например: Компьютерная графика',section:'Раздел (по ДМЖ)',sectionPh:'Раздел долгосрочного плана',
+objectives:'Цели обучения (коды)',maxScore:'Максимальный балл',timeMin:'Время выполнения (мин)',aBuild:'Создать задания и дескрипторы',
+fillSample:'Заполнить образец',copy:'Копировать',wordDl:'Скачать Word (.doc)',pdfDl:'Скачать PDF',excelDl:'Скачать Excel',cancel:'Отмена',save:'Сохранить',date:'Дата',hours:'Кол-во часов',
+qN:'{n} четверть',gN:'{n} класс',hShort:'ч',min:'мин',pts:'б.',all:'Все',qAll:'Все четверти',
+aEmptyT:'Задания ещё не созданы',aEmptyP:'Выберите тему и уровень мышления, чтобы автоматически получить таблицу критериев и дескрипторов — или нажмите «Создать» в списке КТП.',
+kEmptyT:'Календарно-тематический план не загружен',kEmptyP:'Добавьте файл КТП — система автоматически найдёт СОР и СОЧ, рассортирует их по четвертям, определит цели обучения и даты.',
+demoBtn:'Загрузить демо-КТП (7 класс, Информатика)',demoShort:'Загрузить демо-КТП',privacy:'Все файлы обрабатываются только в вашем браузере — данные не отправляются на сервер.',
+mTitle:'Добавить календарно-тематический план',mSub:'Загрузите файл Excel, Word или PDF — СОР / СОЧ определятся автоматически',
+mTabFile:'Загрузить файл',mTabText:'Вставить текст',dzTitle:'Перетащите файл сюда или нажмите',dzHint:'.xlsx, .xls, .csv • .docx, .doc • .pdf — до 15 МБ',
+mTextPh:'Вставьте строки КТП. Например:\n1 четверть\n12 | 15.10.2026 | СОР №1 по разделу «Графика» | 7.2.1.1 | 1',
+mTextSample:'Пример текста',mTextBtn:'Анализировать текст',mRetry:'Выбрать другой файл',
+step1:'Чтение файла…',step2:'Извлечение текста и таблиц…',step3:'Автоматический поиск СОР / СОЧ…',
+errFormat:'Неподдерживаемый формат. Загрузите Excel (.xlsx, .xls, .csv), Word (.docx, .doc) или PDF (.pdf).',
+errSize:'Файл больше 15 МБ. Загрузите файл меньшего размера.',
+errEmpty:'Метки СОР / СОЧ не найдены. Проверьте, что в документе есть строки «БЖБ», «ТЖБ», «СОР», «СОЧ» или «жиынтық бағалау», либо вставьте текст вручную.',
+errLib:'Необходимая библиотека не загрузилась (проверьте интернет). Используйте вкладку «Вставить текст» или демо-КТП.',
+errDoc:'Старый формат .doc прочитан не полностью. Пересохраните файл в Word как .docx или вставьте текст.',
+docWarn:'Старый формат .doc прочитан частично — проверьте результат.',
+kSuccess:'Анализ завершён: найдено {b} СОР, {t} СОЧ',kDemoLoaded:'Демо-КТП загружен — попробуйте добавить свой файл',
+kStatL:'Уроков',kStatB:'СОР найдено',kStatT:'СОЧ найдено',kStatQ:'Четвертей',yearTitle:'Обзор учебного года — сортировка по четвертям',
+viewA:'Оценивания',viewAll:'Весь план',searchPh:'Поиск по теме, разделу, коду…',rowsN:'{n} записей',rowsWord:'строк',
+thType:'Тип',thTopic:'Тема / раздел',thObj:'Цели обучения',thQ:'Четверть',thDate:'Дата / часы',thAct:'Действие',thNum:'№',thHours:'Часы',
+build:'Создать',edit:'Изменить',del:'Удалить',packBtn:'Создать все',packBuilt:'{n} спецификаций создано по образцу №110',
+replace:'Заменить файл',remove:'Удалить КТП',kRemoved:'КТП удалён',undo:'Отменить',restored:'Восстановлено',
+manualAdd:'Добавить вручную',manual:'вручную',warnN:'{n} строк распознано не полностью — проверьте результат',noRows:'Нет результатов по фильтру',
+eEditT:'Редактировать оценивание',eAddT:'Добавить оценивание вручную',eSub:'Уточните данные — спецификация будет создана по этим значениям',eNum:'Порядковый номер',
+eSaved:'Оценивание сохранено',eDeleted:'Оценивание удалено',topicReq:'Заполните тему',exported:'Экспортировано строк: {n}',
+builtT:'Спецификация создана по образцу №110',fromKtp:'Создано из КТП',linked:'Из КТП',specCount:'{n} спецификаций',
+specTitleB:'Спецификация суммативного оценивания за раздел (СОР)',specTitleT:'Спецификация суммативного оценивания за четверть (СОЧ)',packTitle:'Сборник спецификаций суммативного оценивания',
+ministry:'Согласно приказу №110 Министра просвещения РК',seal:'приказ',
+mP:'Предмет',mG:'Класс',mQ:'Четверть',mTopic:'Раздел / тема',mObj:'Цели обучения',mTime:'Время выполнения',mMax:'Максимальный балл',mBook:'Учебник',
+thCrit:'Критерий оценивания',thLvl:'Уровень мыслительных навыков',thTask:'Задание',thDesc:'Дескриптор',thPts:'Балл',total:'Итого',
+lvSplit:'Распределение по уровням',unitWord:'по разделу',unitFb:'Суммативное оценивание за раздел №{n}',termFb:'Суммативное оценивание за {q} четверть',
+ktpExportT:'Календарно-тематический план (результат анализа)',lesson:'Урок',
+copied:'Текст скопирован в буфер обмена',wordDone:'Файл Word загружен',pdfHint:'Открыто окно печати — выберите «Сохранить как PDF»',xlsDone:'Файл Excel загружен',
+qEyebrow:'Ежедневное планирование • №130 / №110 / №472',qTitle1:'Генератор',qTitle2:'КСП',qLead:'Структура краткосрочного плана создаётся автоматически по требованиям выбранного приказа.',
+qFormTitle:'Ввод данных КСП',qOutTitle:'Готовый документ КСП',qOrder:'Выберите нормативный приказ',ord110:'Приказ №110 (ИИ + цифровые ресурсы)',ord472:'Приказ №472 (требования к оцениванию)',ord130:'№130 (Стандарт)',
+teacher:'ФИО педагога',lessonTopic:'Тема урока',lessonTopicPh:'Введите тему урока',qObj:'Цель обучения (по учебной программе)',qLen:'Длительность урока',qBuild:'Составить КСП',
+qEmptyT:'КСП ещё не составлен',qEmptyP:'Заполните поля слева и нажмите «Составить КСП» или используйте кнопку «Заполнить образец».',qDone:'КСП составлен',filled:'Образец данных заполнен',
+cEyebrow:'Справедливое оценивание • Вовлечение всех учеников',cTitle1:'Менеджмент',cTitle2:'класса',cLead:'Случайный выбор ученика, деление на малые группы и цикл справедливости — за урок отвечает каждый.',
+cListTitle:'Список класса',cUpload:'Загрузить Excel',cSample:'Заполнить образец списка',cListHint:'Впишите каждого ученика с новой строки или загрузите из файла Excel (.xlsx, .xls, .csv).',
+cPh:'Айдана Нурлановна\nАлихан Сериков\n...',cPickTitle:'Ученик к доске / для ответа',cPickBtn:'Выбрать случайного ученика',
+cFair:'Честный режим: без повторов',cReset:'Обновить цикл',cGroupsTitle:'Созданные малые группы',cSplit:'Разделить на группы',cGroupN:'{n} группы',
+cGroupsEmpty:'Введите список учеников и нажмите «Разделить на группы»',cNeed:'Сначала заполните список класса',cCycle:'Все ученики выбраны — цикл справедливости обновлён',
+cUploaded:'Загружено учеников: {n}',cToday:'Сегодня отвечали',cCount:'{n} учеников',team:'Группа {n}',
+pEyebrow:'Приказ №110 • Цифровая компетентность',pTitle1:'ИИ-промпты',pTitle2:'и Паспорт',pLead:'Готовая коллекция промптов ChatGPT / Gemini для учителя, паспорт проекта и каталог электронных учебников.',
+passTitle:'Паспорт цифрового образовательного ресурса «Smart Teacher»',passSub:'Согласно приказу №110 Министра просвещения РК',passCopy:'Копировать текст паспорта',
+catTitle:'Каталог электронных учебников (okulyk.kz)',catSub:'Быстрый поиск и открытие электронных учебников официальных издательств РК',catOpen:'Открыть учебник на okulyk.kz',catSel:'Выбранный учебник',
+prTitle:'Готовая коллекция ИИ-промптов для учителя',fAll:'Все',
+fLine1:'© 2025 Smart Teacher — Интерактивный прототип для развития цифровой компетентности педагогов',
+bookMain:'основной учебник',bookAlt:'обновлённое издание',bookGuide:'Методическое пособие'
+}};
+const t=(k,v)=>{let s=(I18N[S.lang]&&I18N[S.lang][k])||I18N.kz[k]||k;if(v)for(const key in v)s=s.replace('{'+key+'}',v[key]);return s};
+const ll=(kz,ru)=>S.lang==='kz'?kz:ru;
+/* ============ data ============ */
+const SUBJECTS=[
+{id:'inf',kz:'Информатика',ru:'Информатика',kw:['информатик']},
+{id:'alg',kz:'Алгебра / Математика',ru:'Алгебра / Математика',kw:['алгебра','математик']},
+{id:'kzt',kz:'Қазақ тілі',ru:'Казахский язык',kw:['қазақ тілі','казахский','қазақ әдеби']},
+{id:'rus',kz:'Орыс тілі',ru:'Русский язык',kw:['орыс тілі','русский']},
+{id:'ist',kz:'Қазақстан тарихы',ru:'История Казахстана',kw:['тарих','истори']},
+{id:'fiz',kz:'Физика',ru:'Физика',kw:['физик']},
+{id:'him',kz:'Химия',ru:'Химия',kw:['хими']},
+{id:'bio',kz:'Биология',ru:'Биология',kw:['биолог']},
+{id:'geo',kz:'География',ru:'География',kw:['географ']},
+{id:'eng',kz:'Ағылшын тілі',ru:'Английский язык',kw:['ағылшын','англий','english']},
+{id:'pri',kz:'Бастауыш сынып',ru:'Начальные классы',kw:['бастауыш','начальн','дүниетану','жаратылыстану','обучение грамот']}
+];
+const subjName=id=>{const s=SUBJECTS.find(x=>x.id===id)||SUBJECTS[0];return S.lang==='kz'?s.kz:s.ru};
+const PUBLISHERS=['Атамұра (Атамура)','Мектеп','Алматыкітап баспасы','Арман-ПВ','НЗМ / НИШ (Назарбаев Зияткерлік мектептері)','Көкжиек-Горизонт','Бөбек / Әдіскер / Жазушы'];
+const LVL=[{kz:'Білу және түсіну',ru:'Знание и понимание'},{kz:'Қолдану',ru:'Применение'},{kz:'Жоғары деңгей дағдылары',ru:'Навыки высокого порядка'}];
+/* task bank: [critKZ,critRU,taskKZ,taskRU,[descKZ],[descRU]] per level */
+const BANK={
+inf:[
+['Негізгі ұғымдарды анықтайды','Определяет базовые понятия','«{topic}» тақырыбы бойынша кемінде 4 негізгі ұғымды анықтап, «ұғым – анықтама – мысал» кестесін толтырыңыз.','По теме «{topic}» определите не менее 4 базовых понятий и заполните таблицу «понятие – определение – пример».',['Кемінде 4 ұғымды дұрыс атайды','Әр ұғымның анықтамасын сәйкестендіреді','Әр ұғымға мысал келтіреді'],['Верно называет не менее 4 понятий','Соотносит определение с понятием','Приводит пример к каждому понятию']],
+['Ақпаратты өңдеу тәсілдерін қолданады','Применяет способы обработки информации','«{topic}» бойынша берілген деректерді кестеге енгізіп, сұрыптау мен формула арқылы өңдеңіз және нәтижені сақтаңыз.','По теме «{topic}» внесите данные в таблицу, выполните сортировку и расчёт по формуле, сохраните результат.',['Деректерді кестеге қатесіз енгізеді','Сұрыптауды дұрыс орындайды','Формула арқылы нәтиже шығарады'],['Безошибочно вносит данные в таблицу','Правильно выполняет сортировку','Получает результат по формуле']],
+['Шешім құрастырып, негіздейді','Конструирует и обосновывает решение','«{topic}» тақырыбына алгоритм (блок-схема) құрастырып, қадамдарын түсіндіріңіз және шешімнің тиімділігін негіздеңіз.','По теме «{topic}» составьте алгоритм (блок-схему), объясните шаги и обоснуйте эффективность решения.',['Алгоритм қадамдарын дұрыс құрады','Шарттар мен циклдарды дұрыс көрсетеді','Шешімнің тиімділігін дәлелдейді'],['Верно строит шаги алгоритма','Правильно показывает условия и циклы','Аргументирует эффективность решения']]],
+alg:[
+['Формулалар мен ережелерді тұжырымдайды','Формулирует правила и формулы','«{topic}» тақырыбының анықтамаларын толықтырып, негізгі формулаларды жазыңыз және әр шаманың мағынасын түсіндіріңіз.','Дополните определения по теме «{topic}», запишите основные формулы и поясните смысл каждой величины.',['Анықтаманы дұрыс толықтырады','Формуланы қатесіз жазады','Шамалардың мағынасын түсіндіреді'],['Верно дополняет определение','Безошибочно записывает формулу','Поясняет смысл величин']],
+['Стандарт тәсілмен есеп шығарады','Решает задачи стандартным способом','«{topic}» бойынша өрнекті ықшамдап, теңдеуді шешіңіз және шешімін тексеріңіз.','По теме «{topic}» упростите выражение, решите уравнение и выполните проверку.',['Өрнекті дұрыс ықшамдайды','Теңдеудің түбірін табады','Шешімін тексереді'],['Верно упрощает выражение','Находит корень уравнения','Выполняет проверку решения']],
+['Мәтінді есепті математикалық модельдейді','Моделирует текстовую задачу','«{topic}» бойынша практикалық жағдаятқа теңдеу (модель) құрып, шешіңіз және жауаптың мағынасын түсіндіріңіз.','По теме «{topic}» составьте уравнение (модель) практической ситуации, решите его и интерпретируйте ответ.',['Шарт бойынша модель құрады','Теңдеуді дұрыс шешеді','Жауапты жағдаятпен байланыстырады'],['Строит модель по условию','Верно решает уравнение','Связывает ответ с ситуацией']]],
+kzt:[
+['Тілдік нормаларды анықтайды','Определяет языковые нормы','«{topic}» мәтінінен берілген 5 сөзге морфологиялық талдау жасаңыз.','Выполните морфологический разбор 5 слов из текста по теме «{topic}».',['Сөз табын дұрыс анықтайды','Жалғауларын дұрыс табады','Сөйлемдегі қызметін көрсетеді'],['Верно определяет часть речи','Правильно находит окончания','Указывает роль в предложении']],
+['Мәтіннің мазмұнын талдайды','Анализирует содержание текста','Мәтіннің негізгі ойын анықтап, тірек сөздер арқылы 5 тармақтан тұратын жоспар құрыңыз.','Определите главную мысль текста и составьте план из 5 пунктов по опорным словам.',['Негізгі ойды дұрыс тұжырымдайды','Тірек сөздерді іріктейді','Жоспарды ретімен құрады'],['Верно формулирует главную мысль','Отбирает опорные слова','Составляет план по порядку']],
+['Дәлелді ой білдіреді','Аргументированно выражает мысль','«{topic}» тақырыбына «тезис – дәлел – қорытынды» құрылымымен 80–100 сөздік абзац жазыңыз.','Напишите абзац (80–100 слов) по теме «{topic}» в структуре «тезис – аргумент – вывод».',['Тезисті нақты тұжырымдайды','Кемінде 2 дәлел келтіреді','Қорытынды жасайды, сауатты жазады'],['Чётко формулирует тезис','Приводит не менее 2 аргументов','Делает вывод, пишет грамотно']]],
+rus:[
+['Грамматикалық негізді анықтайды','Определяет грамматическую основу','В предложениях по теме «{topic}» найдите грамматическую основу и определите части речи выделенных слов.','В предложениях по теме «{topic}» найдите грамматическую основу и определите части речи выделенных слов.',['Сөйлемнің грамматикалық негізін табады','Сөз таптарын дұрыс анықтайды','Тыныс белгілерін негіздейді'],['Находит грамматическую основу','Верно определяет части речи','Обосновывает пунктуацию']],
+['Мәтінді түрлендіріп жазады','Преобразует и пересказывает текст','Прочитайте текст по теме «{topic}» и передайте его содержание в 5–6 предложениях, используя опорные слова.','Прочитайте текст по теме «{topic}» и передайте его содержание в 5–6 предложениях, используя опорные слова.',['Мазмұнды толық жеткізеді','Тірек сөздерді қолданады','Сөйлемдерді дұрыс құрады'],['Полно передаёт содержание','Использует опорные слова','Правильно строит предложения']],
+['Өз пікірін дәлелдейді','Аргументирует своё мнение','Напишите мини-сочинение (60–80 слов) по теме «{topic}»: тезис, два аргумента, вывод.','Напишите мини-сочинение (60–80 слов) по теме «{topic}»: тезис, два аргумента, вывод.',['Пікірін нақты білдіреді','Екі дәлел келтіреді','Қорытынды жасайды'],['Чётко выражает мнение','Приводит два аргумента','Делает вывод']]],
+ist:[
+['Тарихи фактілерді сәйкестендіреді','Соотносит исторические факты','«{topic}» бойынша оқиғаларды хронологиялық ретпен орналастырып, «дата – оқиға – тұлға» сәйкестігін анықтаңыз.','Расположите события по теме «{topic}» в хронологическом порядке и установите соответствие «дата – событие – личность».',['Оқиғаларды ретімен орналастырады','Даталарды дұрыс сәйкестендіреді','Тарихи тұлғаларды атайды'],['Располагает события по порядку','Верно соотносит даты','Называет исторических личностей']],
+['Тарихи дереккөзді талдайды','Анализирует исторический источник','Дереккөз үзіндісін оқып, ондағы негізгі ақпаратты, автор көзқарасын және оқиғаның контексін анықтаңыз.','Проанализируйте фрагмент источника: основная информация, позиция автора, контекст события.',['Негізгі ақпаратты бөліп көрсетеді','Автор көзқарасын анықтайды','Контекспен байланыстырады'],['Выделяет основную информацию','Определяет позицию автора','Связывает с контекстом']],
+['Себеп-салдар байланысын бағалайды','Оценивает причинно-следственные связи','«{topic}» оқиғасының 2 себебі мен 2 салдарын анықтап, тарихи маңызына дәлелді баға беріңіз.','Определите 2 причины и 2 последствия события «{topic}» и дайте аргументированную оценку его историческому значению.',['Себептерді дұрыс анықтайды','Салдарларын негіздейді','Тарихи маңызына баға береді'],['Верно определяет причины','Обосновывает последствия','Оценивает историческое значение']]],
+fiz:[
+['Шамалар мен заңдылықтарды біледі','Знает величины и закономерности','«{topic}» бойынша физикалық шамаларды, олардың формулалары мен SI бірліктерін кестеге толтырыңыз.','Заполните таблицу физических величин, формул и единиц SI по теме «{topic}».',['Шамаларды дұрыс атайды','Формулаларын жазады','SI бірліктерін көрсетеді'],['Верно называет величины','Записывает формулы','Указывает единицы SI']],
+['Формулаларды есепте қолданады','Применяет формулы при решении','«{topic}» бойынша берілген шамалар арқылы есепті шығарыңыз: берілгені, формула, есептеу, жауабы.','Решите задачу по теме «{topic}»: дано, формула, вычисление, ответ.',['Берілгенін дұрыс жазады','Формуланы дұрыс таңдайды','Есептеп, бірлігімен жауап береді'],['Верно записывает «дано»','Правильно выбирает формулу','Вычисляет и даёт ответ с единицами']],
+['Тәжірибе деректерін талдайды','Анализирует данные эксперимента','Өлшеу нәтижелері кестесі бойынша график тұрғызып, тәуелділікті сипаттаңыз және қорытынды жасаңыз.','По таблице измерений постройте график, опишите зависимость и сделайте вывод.',['Графикті дұрыс тұрғызады','Тәуелділікті сипаттайды','Негізделген қорытынды жасайды'],['Верно строит график','Описывает зависимость','Делает обоснованный вывод']]],
+him:[
+['Заттар мен құбылыстарды жіктейді','Классифицирует вещества и явления','«{topic}» бойынша заттарды құрамы мен қасиеттеріне қарай жіктеп, мысалдар келтіріңіз.','Классифицируйте вещества по теме «{topic}» по составу и свойствам, приведите примеры.',['Жіктеу белгісін анықтайды','Заттарды дұрыс топтастырады','Мысалдар келтіреді'],['Определяет признак классификации','Верно группирует вещества','Приводит примеры']],
+['Реакция теңдеулерін құрады','Составляет уравнения реакций','«{topic}» бойынша реакция теңдеулерін жазып, коэффициенттерді қойыңыз және реакция түрін анықтаңыз.','Запишите уравнения реакций по теме «{topic}», расставьте коэффициенты, определите тип реакции.',['Өнімдерді дұрыс болжайды','Коэффициенттерді теңестіреді','Реакция түрін анықтайды'],['Верно прогнозирует продукты','Уравнивает коэффициенты','Определяет тип реакции']],
+['Зат мөлшері бойынша есептейді','Выполняет расчёты по количеству вещества','«{topic}» бойынша зат мөлшері/масса арқылы есептеу жүргізіп, нәтиженің дұрыстығын бағалаңыз.','Выполните расчёт по количеству вещества/массе по теме «{topic}» и оцените достоверность результата.',['Формуланы дұрыс қолданады','Есептеулерді орындайды','Нәтижені бағалайды'],['Верно применяет формулу','Выполняет вычисления','Оценивает результат']]],
+bio:[
+['Құрылым мен қызметті сәйкестендіреді','Соотносит структуру и функцию','«{topic}» бойынша ағза құрылымдарын қызметтерімен сәйкестендіріп, сызбаны толықтырыңыз.','Соотнесите структуры организма с их функциями по теме «{topic}» и дополните схему.',['Құрылымдарды дұрыс атайды','Қызметтерін сәйкестендіреді','Сызбаны толықтырады'],['Верно называет структуры','Соотносит функции','Дополняет схему']],
+['Биологиялық процесті түсіндіреді','Объясняет биологический процесс','«{topic}» процесінің кезеңдерін ретімен жазып, әр кезеңдегі өзгерістерді түсіндіріңіз.','Запишите этапы процесса «{topic}» по порядку и объясните изменения на каждом этапе.',['Кезеңдерді ретімен жазады','Өзгерістерді түсіндіреді','Терминдерді дұрыс қолданады'],['Записывает этапы по порядку','Объясняет изменения','Верно использует термины']],
+['Экологиялық жағдаятты талдайды','Анализирует экологическую ситуацию','Берілген экологиялық жағдаятты талдап, ықтимал салдарларын болжаңыз және шешім ұсыныңыз.','Проанализируйте экологическую ситуацию, спрогнозируйте последствия и предложите решение.',['Себептерін анықтайды','Салдарларын болжайды','Негізделген шешім ұсынады'],['Определяет причины','Прогнозирует последствия','Предлагает обоснованное решение']]],
+geo:[
+['Картадан нысандарды анықтайды','Находит объекты на карте','«{topic}» бойынша картадан берілген нысандарды тауып, координаттарын жазыңыз.','Найдите на карте объекты по теме «{topic}» и запишите их координаты.',['Нысандарды дұрыс табады','Координаттарын анықтайды','Шартты белгілерді оқиды'],['Верно находит объекты','Определяет координаты','Читает условные знаки']],
+['Карта деректерімен есептейді','Выполняет расчёты по карте','Масштаб пен карта арақашықтығы арқылы жердегі нақты қашықтықты есептеңіз.','Вычислите реальное расстояние по масштабу и расстоянию на карте.',['Масштабты дұрыс қолданады','Есептеуді орындайды','Бірліктерін дұрыс жазады'],['Верно применяет масштаб','Выполняет вычисление','Правильно записывает единицы']],
+['Аймақтарды салыстырып бағалайды','Сравнивает и оценивает регионы','«{topic}» бойынша екі аймақты 3 критериймен салыстырып, айырмашылық себептерін түсіндіріңіз.','Сравните два региона по теме «{topic}» по 3 критериям и объясните причины различий.',['Критерийлер бойынша салыстырады','Айырмашылықтарды анықтайды','Себептерін негіздейді'],['Сравнивает по критериям','Определяет различия','Обосновывает причины']]],
+eng:[
+['Тақырыптық лексиканы таниды','Узнаёт тематическую лексику','Match 6 words on the topic «{topic}» with their definitions and make 2 word combinations.','Match 6 words on the topic «{topic}» with their definitions and make 2 word combinations.',['Сөздерді мағынасымен сәйкестендіреді','Тіркестерді дұрыс құрады','Жазылуын дұрыс сақтайды'],['Соотносит слова со значениями','Верно составляет словосочетания','Соблюдает правописание']],
+['Тілдік үлгіні жағдаятта қолданады','Применяет языковую модель в ситуации','Complete the dialogue (6 lines) on the topic «{topic}» using the target grammar, then act it out.','Complete the dialogue (6 lines) on the topic «{topic}» using the target grammar, then act it out.',['Диалогты мағынасымен толықтырады','Грамматикалық үлгіні дұрыс қолданады','Сөйлеу әдебін сақтайды'],['Логично дополняет диалог','Верно использует грамматику','Соблюдает речевой этикет']],
+['Өз пікірін жазбаша дәлелдейді','Письменно аргументирует мнение','Write an opinion paragraph (60–80 words) on «{topic}»: opinion, two reasons, conclusion.','Write an opinion paragraph (60–80 words) on «{topic}»: opinion, two reasons, conclusion.',['Пікірін анық білдіреді','Екі себеп келтіреді','Байланыстырушы сөздерді қолданады'],['Чётко выражает мнение','Приводит две причины','Использует слова-связки']]],
+pri:[
+['Негізгі ұғымды таниды','Узнаёт базовое понятие','«{topic}» бойынша суреттер мен мысалдарды дұрыс топқа бөліп, атауын жазыңыз.','Распределите картинки и примеры по теме «{topic}» в нужные группы и подпишите их.',['Мысалдарды дұрыс топтастырады','Атауын жазады','Түсіндіреді'],['Верно группирует примеры','Подписывает названия','Объясняет выбор']],
+['Үлгі бойынша орындайды','Выполняет по образцу','Үлгіге сүйеніп, «{topic}» бойынша 3 тапсырманы орындаңыз және тексеріңіз.','По образцу выполните и проверьте 3 задания по теме «{topic}».',['Үлгіні дұрыс қолданады','Тапсырмаларды орындайды','Қатесін тексереді'],['Верно применяет образец','Выполняет задания','Проверяет ошибки']],
+['Өз мысалын құрастырады','Составляет собственный пример','«{topic}» бойынша өз есебіңді/мысалыңды құрастырып, шешу жолын түсіндіріңіз.','Составьте собственную задачу/пример по теме «{topic}» и объясните способ решения.',['Мысал құрастырады','Дұрыс шешеді','Жолын түсіндіреді'],['Составляет пример','Верно решает','Объясняет способ']]]
+};
+const TEAM=[['Тұлпар','#22C7E0'],['Сұңқар','#F5B301'],['Бүркіт','#E052A6'],['Қыран','#37C978'],['Арыстан','#4D9FFF'],['Жорға','#8B7CFF']];
+const NAMES=['Айдана Нұрланқызы','Әлихан Серікұлы','Дана Мұратқызы','Нұрислам Бақытұлы','Аружан Ержанқызы','Санжар Талғатұлы','Мадина Олжасқызы','Арман Қайратұлы','Әсем Болатқызы','Данияр Асқарұлы','Томирис Ермекқызы','Алинұр Жандосұлы','Зере Қуанышқызы','Бекзат Нұржанұлы','Аяулым Маратқызы','Инжу Тимурқызы','Ұлан Дәуренұлы','Виктория Сергеевна','Никита Дмитриев','Дария Ғабитқызы','Амирхан Ерланұлы','Айша Жомартқызы','Темирлан Азаматұлы','Сара Оразқызы'];
+const PCATS=[['all','Барлығы','Все'],['plan','Жоспарлау','Планирование'],['assess','Бағалау','Оценивание'],['diff','Саралау','Дифференциация'],['comm','Коммуникация','Коммуникация']];
+const PROMPTS=[
+{c:'plan',t:['ҚМЖ құрастыру промпты (№130)','Промпт для КСП (№130)'],b:['Сен — Қазақстан Республикасының тәжірибелі мұғалімісің. №130 бұйрық талаптарына сай қысқа мерзімді жоспар (ҚМЖ) құрастыр.\nПән: [пән]. Сынып: [сынып]. Бөлім: [бөлім]. Тақырып: [тақырып]. Оқу мақсаты: [код және тұжырым].\nҚұрылымы: сабақ мақсаты; кезеңдер (басы 5 мин, ортасы 30 мин, соңы 5 мин); мұғалім/оқушы әрекеттері; қалыптастырушы бағалау; саралау; ресурстар; рефлексия. Кесте түрінде бер, тілі — қазақша.','Ты — опытный учитель Республики Казахстан. Составь краткосрочный план (КСП) по требованиям приказа №130.\nПредмет: [предмет]. Класс: [класс]. Раздел: [раздел]. Тема: [тема]. Цель обучения: [код и формулировка].\nСтруктура: цель урока; этапы (начало 5 мин, середина 30 мин, конец 5 мин); действия учителя/ученика; формативное оценивание; дифференциация; ресурсы; рефлексия. Дай в виде таблицы, на русском языке.']},
+{c:'assess',t:['БЖБ/ТЖБ спецификациясы (№110)','Спецификация СОР/СОЧ (№110)'],b:['№110 бұйрық талаптарына сай [пән] пәнінен [сынып]-сыныпқа арналған [БЖБ/ТЖБ] спецификациясын жаса.\nТақырып: [тақырып]. Оқу мақсаттары: [кодтар]. Максималды балл: [10/20]. Уақыт: [20/40] мин.\nКесте бағандары: оқу мақсаты, бағалау критерийі, ойлау дағдысының деңгейі (білу/түсіну, қолдану, жоғары деңгей), тапсырма, дескрипторлар, балл. Әр тапсырмаға 2–3 дескриптор және нақты балл бер. Баллдар қосындысы максималды баллға тең болсын.','Составь спецификацию [СОР/СОЧ] по предмету [предмет] для [класс] класса по требованиям приказа №110.\nТема: [тема]. Цели обучения: [коды]. Максимальный балл: [10/20]. Время: [20/40] мин.\nКолонки таблицы: цель обучения, критерий оценивания, уровень мыслительных навыков (знание/понимание, применение, навыки высокого порядка), задание, дескрипторы, балл. К каждому заданию дай 2–3 дескриптора и точный балл. Сумма баллов должна равняться максимальному баллу.']},
+{c:'assess',t:['Дескрипторларды нақтылау','Уточнение дескрипторов'],b:['[пән], [сынып]-сынып. Тапсырма: [тапсырма мәтіні].\nОсы тапсырмаға өлшенетін, нақты әрекет етістіктерімен жазылған 3 дескриптор құрастыр («анықтайды», «салыстырады», «негіздейді»...). Әр дескрипторға балл ұсын және жиынын көрсет. Артық сөзсіз, кесте түрінде бер.','[предмет], [класс] класс. Задание: [текст задания].\nСоставь к этому заданию 3 измеримых дескриптора с конкретными глаголами действия («определяет», «сравнивает», «обосновывает»...). Предложи балл за каждый дескриптор и укажи итог. Без лишних слов, в виде таблицы.']},
+{c:'diff',t:['Үш деңгейлі саралау тапсырмалары','Задания трёх уровней дифференциации'],b:['[тақырып] бойынша үш деңгейлі саралау тапсырмаларын жаса:\nА деңгейі — тірек/үлгі арқылы; В деңгейі — стандарт қолдану; С деңгейі — шығармашылық/зерттеу.\nПән: [пән], сынып: [сынып]. Әр деңгейге тапсырма, күтілетін нәтиже және бағалау критерийін бер. Барлығы бір оқу мақсатына бағытталсын: [код].','Создай задания трёх уровней дифференциации по теме [тема]:\nУровень А — по опоре/образцу; уровень B — стандартное применение; уровень C — творчество/исследование.\nПредмет: [предмет], класс: [класс]. К каждому уровню дай задание, ожидаемый результат и критерий оценивания. Все задания направлены на одну цель обучения: [код].']},
+{c:'assess',t:['Қалыптастырушы бағалау идеялары','Идеи формативного оценивания'],b:['[тақырып] сабағына 5 қалыптастырушы бағалау тәсілін ұсын (шығу билеті, бір минуттық эссе, бағдаршам, өзара бағалау, дескрипторлы кесте...).\nӘрқайсысына: мақсаты, өткізу уақыты (2–5 мин), нұсқауы және кері байланыс үлгісі. Пән: [пән], сынып: [сынып].','Предложи 5 приёмов формативного оценивания к уроку [тема] (выходной билет, минутное эссе, светофор, взаимооценивание, таблица с дескрипторами...).\nДля каждого: цель, время проведения (2–5 мин), инструкция и образец обратной связи. Предмет: [предмет], класс: [класс].']},
+{c:'diff',t:['Мәтінді оқушы деңгейіне бейімдеу','Адаптация текста под уровень ученика'],b:['Мына мәтінді [сынып]-сынып оқушысының деңгейіне бейімдеп қайта жаз: сөйлемдерді қысқарт, күрделі терминдерді түсіндір, негізгі ойды сақта.\nСоңына 3 түсіну сұрағын және жауап кілтін қос. Мәтін: [мәтінді қойыңыз].','Перепиши этот текст под уровень ученика [класс] класса: сократи предложения, объясни сложные термины, сохрани главную мысль.\nВ конце добавь 3 вопроса на понимание и ключи с ответами. Текст: [вставьте текст].']},
+{c:'comm',t:['Ата-анаға кері байланыс хаты','Письмо обратной связи родителям'],b:['[оқушы есімі] оқушысының ата-анасына жылы, сыпайы кері байланыс хатын жаз (120–150 сөз).\nЖетістігі: [жетістік]. Өсу аймағы: [өсу аймағы]. Үйде қолдау жолы: [ұсыныс].\nБағалау тілін емес, нақты әрекет тілін қолдан, жағымды үнмен аяқта.','Напиши тёплое, тактичное письмо обратной связи родителям ученика [имя] (120–150 слов).\nУспех: [успех]. Зона роста: [зона роста]. Как поддержать дома: [рекомендация].\nИспользуй язык конкретных действий, а не оценок; заверши на позитивной ноте.']},
+{c:'plan',t:['Рефлексия жоспары','План рефлексии'],b:['[тақырып] сабағының соңына 5 минуттық рефлексия жоспарла:\n3 сұрақ (не білдім / не қиын болды / қайда қолданамын), «Баспалдақ» өзін-өзі бағалау парағының мәтіні және мұғалімге арналған қорытынды талдау критерийлері. Сынып: [сынып].','Спланируй 5-минутную рефлексию в конце урока [тема]:\n3 вопроса (что узнал / что было трудно / где применю), текст листа самооценки «Лестница» и критерии итогового анализа для учителя. Класс: [класс].']}
+];
+/* ============ state ============ */
+const LS='smartTeacher.v3';
+let S={v:3,lang:'kz',tab:'assess',seeded:false,ktp:null,f:{view:'a',type:'all',q:'',quarter:0},docB:null,docQ:null,linked:null,roster:[],picked:[],fair:true,groupN:4,groups:null,pcat:'all'};
+try{const raw=localStorage.getItem(LS);if(raw){const p=JSON.parse(raw);if(p&&p.v===3)S=Object.assign(S,p)}}catch(e){}
+const save=debounce(()=>{try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}},250);
+/* ============ toast / clipboard / export ============ */
+function toast(msg,type,action){
+const box=$('#toasts');if(box.children.length>3)box.firstChild.remove();
+const el=document.createElement('div');el.className='toast '+(type||'ok');
+el.innerHTML=(type==='err'?ICONS.alert:type==='warn'?ICONS.alert:type==='info'?ICONS.info:ICONS.check)+'<span>'+esc(msg)+'</span>';
+if(action){const b=document.createElement('button');b.className='ta';b.textContent=action.label;b.onclick=()=>{action.fn();kill()};el.appendChild(b)}
+box.appendChild(el);
+const kill=()=>{el.classList.add('out');setTimeout(()=>el.remove(),300)};
+setTimeout(kill,action?7000:4600);
+}
+async function copyText(txt){
+try{await navigator.clipboard.writeText(txt)}catch(e){const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(_){/*noop*/}ta.remove()}
+toast(t('copied'));
+}
+const fname=s=>s.replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,'_').slice(0,80);
+function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800)}
+const WORD_CSS='body{font-family:"Times New Roman",serif;font-size:11pt;color:#1f2a30}h2{font-size:14pt;text-align:center;margin:6pt 0}h4{font-size:12pt}.doc-min{font-size:8.5pt;color:#666;text-align:center;text-transform:uppercase}.doc-sub{font-size:9.5pt;color:#666;text-align:center}.doc-seal{display:none}table{border-collapse:collapse;width:100%;margin:6pt 0}th,td{border:1px solid #666;padding:4pt 6pt;font-size:9.5pt;vertical-align:top;text-align:left}thead th{background:#EEE6D0;text-align:center}.doc-meta th{background:#F0E8D4;width:150pt}tfoot td{background:#F0E8D4;font-weight:bold}.ctr{text-align:center}.lvline{font-size:9pt}.doc-note{font-size:8.5pt;color:#666;font-style:italic}.page-break{page-break-before:always}tr.strong td{font-weight:bold;background:#F5EEDC}';
+function wordExport(html,title,name){
+const doc='<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>'+esc(title)+'</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml><![endif]--><style>'+WORD_CSS+'</style></head><body>'+html+'</body></html>';
+dl(new Blob(['\ufeff',doc],{type:'application/msword'}),fname(name)+'.doc');toast(t('wordDone'));
+}
+function excelExport(aoa,name,sheet){
+if(typeof XLSX==='undefined'){toast(t('errLib'),'err');return false}
+const ws=XLSX.utils.aoa_to_sheet(aoa);ws['!cols']=aoa[0].map((_,i)=>({wch:i===3?52:i===4?24:12}));
+const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,sheet||'КТЖ');
+XLSX.writeFile(wb,fname(name)+'.xlsx');toast(t('xlsDone'));return true;
+}
+function printExport(html,title){
+const root=$('#printRoot');root.innerHTML='<div class="paper" style="box-shadow:none;background:#fff;padding:0">'+html+'</div>';
+const old=document.title;document.title=fname(title);
+const done=()=>{document.title=old;root.innerHTML='';window.removeEventListener('afterprint',done)};
+window.addEventListener('afterprint',done);
+setTimeout(()=>{window.print();toast(t('pdfHint'),'info')},60);
+}
+/* ============ parsing ============ */
+const CL='A-Za-zА-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүҺһІі';
+const wrx=w=>new RegExp('(^|[^'+CL+'])'+w+'($|[^'+CL+'])','i');
+const RX_B=[wrx('БЖБ'),wrx('СОР'),/бөлім\w*\s+бойынша\s+жиынтық/i,/бөлімдік\s+жиынтық/i,/суммативн\w*\s+оцениван\w*\s+за\s+раздел/i];
+const RX_T=[wrx('ТЖБ'),wrx('СОЧ'),/тоқсан\w*\s+бойынша\s+жиынтық/i,/тоқсандық\s+жиынтық/i,/суммативн\w*\s+оцениван\w*\s+за\s+четверть/i];
+const CODE_RX=/(^|[^\d.])(\d{1,2}\.\d{1,2}\.\d{1,2}\.\d{1,2})(?![\d.])/g;
+const stripCodes=s=>s.replace(/\d{1,2}\.\d{1,2}\.\d{1,2}\.\d{1,2}/g,' ');
+const getCodes=s=>{const out=[];let m;const rx=new RegExp(CODE_RX.source,'g');while((m=rx.exec(s)))out.push(m[2]);return uniq(out)};
+function detectType(line){
+let bi=-1,ti=-1;
+RX_B.forEach(r=>{const m=line.search(r);if(m>-1&&(bi<0||m<bi))bi=m});
+RX_T.forEach(r=>{const m=line.search(r);if(m>-1&&(ti<0||m<ti))ti=m});
+if(bi<0&&ti<0)return null;
+if(ti<0)return'BJB';if(bi<0)return'TJB';return bi<=ti?'BJB':'TJB';
+}
+function matchQuarter(s){
+let m=s.match(/([1-4])\s*[-–]?\s*(?:тоқсан|четверть)/i);if(m)return+m[1];
+m=s.match(/(^|[^A-Za-z])(IV|III|II|I)\s*[-–]?\s*(?:тоқсан|четверть)/i);
+if(m)return{I:1,II:2,III:3,IV:4}[m[2].toUpperCase()];return 0;
+}
+function matchSection(s){
+let m=s.match(/(?:бөлімі?|раздел)\s*[:\-–—]\s*(.{3,})/i);
+if(m)return m[1].replace(/[«»"“”]/g,'').trim();
+m=s.match(/[«"“]([^»"”]{3,})[»"”]\s*(?:бөлім|раздел)/i);
+if(m)return m[1].trim();return'';
+}
+function normDate(d,mo,y){
+d=+d;mo=+mo;if(d<1||d>31||mo<1||mo>12)return'';
+let yy=y?+y:'';if(yy&&yy<100)yy+=2000;
+return pad(d)+'.'+pad(mo)+(yy?'.'+yy:'');
+}
+function extractDate(texts){
+for(const c of texts){const m=c.trim().match(/^(\d{1,2})[.\/-](\d{1,2})(?:[.\/-](\d{2,4}))?$/);if(m){const r=normDate(m[1],m[2],m[3]);if(r)return r}}
+const line=stripCodes(texts.join(' '));
+const m=line.match(/(^|[^\d.])(\d{1,2})[.\/](\d{1,2})(?:[.\/](\d{2,4}))?(?![\d.])/);
+if(m)return normDate(m[2],m[3],m[4]);return'';
+}
+const qFromDate=ds=>{if(!ds)return 0;const mo=+ds.split('.')[1];if(mo===9||mo===10)return 1;if(mo===11||mo===12)return 2;if(mo>=1&&mo<=3)return 3;if(mo===4||mo===5)return 4;return 0};
+const isNum=s=>/^\d+([.,]\d+)?$/.test(s.trim());
+const isDateCell=s=>/^\d{1,2}[.\/-]\d{1,2}([.\/-]\d{2,4})?$/.test(s.trim());
+function pickTopic(texts){
+let best='',bl=0;
+texts.forEach((x,i)=>{
+const v=x.trim();if(v.length<4||isNum(v)||isDateCell(v))return;
+if(/^(күні|дата|сабақ тақырыбы|оқу мақсаты|сағат|ескерту|№|тема урока|цель обучения|часы|примечание)$/i.test(v))return;
+const letters=stripCodes(v).replace(/[^'+CL+']/g,'');if(letters.length<4)return;
+const score=v.length+i*0.1;if(score>bl){bl=score;best=v}
+});return best;
+}
+function cleanTopic(cell){
+if(!cell)return{topic:'',quoted:''};
+let s=stripCodes(cell);
+const q=s.match(/[«"“]([^»"”]{3,})[»"”]/);
+const quoted=q?q[1].trim():'';
+if(quoted)return{topic:quoted,quoted};
+s=s.replace(/(БЖБ|ТЖБ|СОР|СОЧ)\s*№?\s*\d{0,2}/gi,' ');
+s=s.replace(/(бөлімі?|тоқсан|раздел\w*|четверть)\s*бойынша(\s*жиынтық\s*бағалау)?/gi,' ');
+s=s.replace(/суммативное\s+оценивание(\s+за\s+(раздел|четверть))?/gi,' ');
+s=s.replace(/жиынтық\s*бағалау/gi,' ').replace(/№\s*\d+/g,' ');
+s=s.replace(/\s{2,}/g,' ').replace(/^[\s\-–—:.,\d]+|[\s\-–—:.,]+$/g,'').trim();
+return{topic:s,quoted:''};
+}
+function analyze(parsed){
+const rows=[];let quarter=0,section='',unitObj=[],qObj=[],lastTopics=[],lessonIdx=0,warnings=0;
+const counts={BJB:0,TJB:0};
+const setQ=q=>{if(q&&q!==quarter){quarter=q;unitObj=[];qObj=[];lastTopics=[]}};
+const feed=(cells,sheetQ)=>{
+const texts=cells.map(c=>String(c??'').trim());
+const line=texts.filter(Boolean).join(' | ');if(!line)return;
+if(sheetQ)setQ(sheetQ);
+const type=detectType(line);
+const nonEmpty=texts.filter(Boolean);
+const mq=matchQuarter(line),ms=matchSection(line);
+if(!type&&nonEmpty.length<=2&&(mq||ms)){if(mq)setQ(mq);if(ms){section=ms;unitObj=[];lastTopics=[]}rows.push({kind:'ctx',text:line});return}
+if(mq)setQ(mq);if(ms){section=ms;unitObj=[];lastTopics=[]}
+const codes=getCodes(line);
+const date=extractDate(texts);
+const hCells=texts.slice(2).filter(x=>/^[1-4]$/.test(x));
+const hours=hCells.length?+hCells[hCells.length-1]:1;
+const topicCell=pickTopic(texts);
+if(type){
+counts[type]++;
+const nm=line.match(/(?:БЖБ|ТЖБ|СОР|СОЧ)\s*№?\s*(\d{1,2})/i);
+const num=nm?+nm[1]:counts[type];
+const q=quarter||qFromDate(date)||(type==='TJB'?clamp(num,1,4):clamp(Math.floor(lessonIdx/16)+1,1,4));
+const ct=cleanTopic(topicCell);
+if(!topicCell)warnings++;
+const objs=codes.length?codes:(type==='BJB'?uniq(unitObj):uniq(qObj)).slice(0,6);
+rows.push({id:uid(),kind:type,num,topic:ct.topic,section:section||ct.quoted||'',objectives:objs,date,hours,quarter:q,raw:line});
+if(type==='BJB'){unitObj=[];lastTopics=[]}else{qObj=[];unitObj=[];lastTopics=[]}
+}else if(codes.length||(date&&topicCell.length>3)){
+lessonIdx++;
+codes.forEach(c=>{unitObj.push(c);qObj.push(c)});
+const topic=topicCell||'';
+if(topic)lastTopics.push(topic);
+rows.push({kind:'lesson',num:lessonIdx,topic,objectives:codes,date,hours,quarter:quarter||qFromDate(date)||clamp(Math.floor((lessonIdx-1)/17)+1,1,4),raw:line});
+}
+};
+if(parsed.rows)parsed.rows.forEach(r=>feed(r.cells,r.sheetQ||0));
+else(parsed.lines||[]).forEach(l=>feed(l.split(/\s*\|\s*|\t|;\s*/).map(x=>x.trim()),0));
+const hint=(parsed.hint||'')+' '+rows.slice(0,10).map(r=>r.raw||r.text||'').join(' ');
+const hl=hint.toLowerCase();
+let subject='';for(const s of SUBJECTS){if(s.kw.some(k=>hl.includes(k))){subject=s.id;break}}
+const gm=hint.match(/(\d{1,2})\s*[-–_]?\s*(?:сынып|класс|сын\b)/i);
+const grade=gm?clamp(+gm[1],1,11):0;
+return{rows,lessons:lessonIdx,warnings,subject,grade};
+}
+async function parseExcel(file){
+if(typeof XLSX==='undefined')throw new Error('LIB');
+const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});
+const rows=[];let hint=file.name;
+wb.SheetNames.forEach(sn=>{
+const sq=matchQuarter(sn);
+const arr=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,raw:false,defval:''});
+arr.forEach((cells,i)=>{if(i<6)hint+=' '+cells.join(' ');rows.push({cells,sheetQ:sq})});
+});
+return{rows,hint};
+}
+async function parseDocx(file){
+if(typeof mammoth==='undefined')throw new Error('LIB');
+const res=await mammoth.convertToHtml({arrayBuffer:await file.arrayBuffer()});
+const doc=new DOMParser().parseFromString(res.value,'text/html');
+const tables=doc.querySelectorAll('table');const rows=[];
+if(tables.length){tables.forEach(tb=>tb.querySelectorAll('tr').forEach(tr=>rows.push({cells:Array.from(tr.querySelectorAll('td,th')).map(td=>td.textContent.trim()),sheetQ:0})))}
+const lines=Array.from(doc.querySelectorAll('p,h1,h2,h3,h4,li')).map(p=>p.textContent.trim()).filter(Boolean);
+return{rows:rows.length?rows:null,lines:rows.length?null:lines,hint:file.name+' '+lines.slice(0,8).join(' ')};
+}
+async function parseDocLegacy(file){
+const buf=await file.arrayBuffer();
+let best='';
+for(const enc of['utf-16le','windows-1251']){
+try{const txt=new TextDecoder(enc).decode(buf);
+const runs=txt.match(/[0-9A-Za-zА-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүҺһІі«»"№().,:;\-–\/ ]{10,}/g)||[];
+const joined=runs.join('\n');
+const cyr=(joined.match(/[А-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүҺһІі]/g)||[]).length;
+if(cyr>(best.match(/[А-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүҺһІі]/g)||[]).length)best=joined;
+}catch(e){}}
+const lines=best.split(/\n+/).map(l=>l.replace(/\s{3,}/g,' | ').trim()).filter(l=>l.length>5);
+if(!lines.length)throw new Error('DOC');
+return{lines,hint:file.name+' '+lines.slice(0,6).join(' '),legacy:true};
+}
+async function parsePdf(file){
+if(typeof pdfjsLib==='undefined')throw new Error('LIB');
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+const lines=[];
+for(let p=1;p<=pdf.numPages;p++){
+const page=await pdf.getPage(p);const tc=await page.getTextContent();
+const groups=[];
+tc.items.forEach(it=>{
+if(!it.str||!it.str.trim())return;
+const y=it.transform[5],x=it.transform[4];
+let g=groups.find(g=>Math.abs(g.y-y)<2.6);
+if(!g){g={y,items:[]};groups.push(g)}
+g.items.push({x,str:it.str,w:it.width||it.str.length*4});
+});
+groups.sort((a,b)=>b.y-a.y).forEach(g=>{
+g.items.sort((a,b)=>a.x-b.x);
+let line='',end=-1;
+g.items.forEach(it=>{const gap=it.x-end;line+=(end<0?'':gap>9?' | ':gap>1?' ':'')+it.str;end=it.x+it.w});
+if(line.trim())lines.push(line.trim());
+});
+}
+if(!lines.length)throw new Error('EMPTY');
+return{lines,hint:file.name+' '+lines.slice(0,8).join(' ')};
+}
+async function parseFile(file){
+const ext=file.name.split('.').pop().toLowerCase();
+if(['xlsx','xls','csv'].includes(ext))return parseExcel(file);
+if(ext==='docx')return parseDocx(file);
+if(ext==='doc')return parseDocLegacy(file);
+if(ext==='pdf')return parsePdf(file);
+throw new Error('FMT');
+}
+/* ============ demo KTP ============ */
+function demoRows(){
+const units=[
+{q:1,sec:'Ақпарат және оны өңдеу',start:new Date(2026,8,1),code:'7.1',topics:[['Ақпараттық процестер','1.1.1'],['Ақпаратты өлшеу бірліктері','1.1.2'],['Ақпаратты кодтау','1.1.2'],['Екілік кодтау','1.2.1'],['Файлдар және файлдық жүйе','1.2.1'],['Файлдарды архивтеу','1.2.2'],['Ақпаратты қорғау тәсілдері','1.3.1'],['Пароль және қауіпсіздік','1.3.1'],['Зиянкес бағдарламалар','1.3.2'],['Антивируспен жұмыс','1.3.2'],['Ақпаратты іздеу стратегиялары','1.4.1'],['Іздеу жүйелерінің тілі','1.4.1'],['Деректердің дұрыстығын тексеру','1.4.2'],['Бөлімді қайталау','1.4.2']]},
+{q:2,sec:'Компьютерлік графика',start:new Date(2026,10,5),code:'7.2',topics:[['Растрлық графика ұғымы','2.1.1'],['Векторлық графика','2.1.1'],['Графика форматтары','2.1.2'],['Түс модельдері: RGB, CMYK','2.2.1'],['Растрлық редактор интерфейсі','2.2.2'],['Қабаттармен жұмыс','2.2.2'],['Сүзгілер мен эффектілер','2.3.1'],['Векторлық редакторда фигуралар','2.3.1'],['Безье қисықтары','2.3.2'],['Логотип әзірлеу','2.4.1'],['Инфографика элементтері','2.4.1'],['Коллаж құрастыру','2.4.2'],['Файл өлшемін оңтайландыру','2.4.2'],['Бөлімді қайталау','2.4.2']]},
+{q:3,sec:'Алгоритмдеу және программалау негіздері',start:new Date(2027,0,12),code:'7.3',topics:[['Алгоритм ұғымы және орындаушылар','3.1.1'],['Алгоритм түрлері','3.1.1'],['Блок-схема элементтері','3.1.2'],['Сызықтық алгоритмдер','3.2.1'],['Тармақталу шарттары','3.2.1'],['if операторы','3.2.2'],['Күрделі шарттар','3.2.2'],['Цикл ұғымы','3.3.1'],['for циклі','3.3.1'],['while циклі','3.3.2'],['Айнымалылар мен типтер','3.3.2'],['Енгізу-шығару операторлары','3.4.1'],['Есепті алгоритмдеу','3.4.1'],['Жобаны жоспарлау','3.4.2'],['Программаны жөндеу (debug)','3.4.2'],['Тестілеу','3.4.3'],['Жобаны қорғауға дайындық','3.4.3'],['Бөлімді қайталау','3.4.3']]},
+{q:4,sec:'Аппараттық және бағдарламалық жасақтама',start:new Date(2027,3,1),code:'7.4',topics:[['Компьютер архитектурасы','4.1.1'],['Процессор және жедел жады','4.1.1'],['Сыртқы құрылғылар','4.1.2'],['Желілік құрылғылар','4.2.1'],['Желі түрлері','4.2.1'],['Бұлттық қызметтер','4.2.2'],['Бірлескен жұмыс құжаттары','4.2.2'],['Операциялық жүйе түрлері','4.3.1'],['Драйверлер','4.3.1'],['Бағдарламалық лицензиялар','4.3.2'],['Ашық және жабық код','4.3.2'],['Цифрлық этика','4.4.1'],['Авторлық құқық','4.4.1'],['Бөлімді қайталау','4.4.1']]}
+];
+const rows=[];let idx=0;
+units.forEach(u=>{
+rows.push({cells:[u.q+'-тоқсан'],sheetQ:0});
+rows.push({cells:[u.q+'-бөлім: '+u.sec],sheetQ:0});
+rows.push({cells:['№','Күні','Сабақ тақырыбы','Оқу мақсаты','Сағат','Ескерту'],sheetQ:0});
+const total=u.topics.length+2;
+for(let i=0;i<total;i++){
+idx++;
+const d=new Date(u.start.getTime()+(Math.floor(i/2)*7+(i%2)*2)*864e5);
+const ds=fmtD(d);
+if(i<u.topics.length){
+const[tp,cd]=u.topics[i];
+rows.push({cells:[String(idx),ds,tp,u.code+'.'+cd,'1',''],sheetQ:0});
+}else if(i===u.topics.length){
+rows.push({cells:[String(idx),ds,'БЖБ №'+u.q+'. «'+u.sec+'» бөлімі бойынша',u.code+'.1.2, '+u.code+'.2.1, '+u.code+'.3.1','1',''],sheetQ:0});
+}else{
+rows.push({cells:[String(idx),ds,'ТЖБ №'+u.q+'. '+u.q+'-тоқсан бойынша','','1',''],sheetQ:0});
+}
+}
+});
+return{rows,hint:'КТЖ_Информатика_7-сынып_2026-2027 '+rows.slice(0,8).map(r=>r.cells.join(' ')).join(' ')};
+}
+function loadDemo(silent){
+const a=analyze(demoRows());
+S.ktp=Object.assign({file:{name:'КТЖ_Информатика_7-сынып_2026-2027.xlsx',format:'demo',size:0,at:Date.now()}},a);
+S.f={view:'a',type:'all',q:'',quarter:0};S.linked=null;
+renderKtpZone();save();
+if(!silent){closeModal('mKtp');toast(t('kSuccess',{b:countKind('BJB'),t:countKind('TJB')}));const first=assessList()[0];if(first)pickRow(first.id,true)}
+}
+/* ============ KTP render ============ */
+const isA=r=>r.kind==='BJB'||r.kind==='TJB';
+const assessList=()=>S.ktp?S.ktp.rows.filter(isA).sort((a,b)=>a.quarter-b.quarter||(a.kind===b.kind?a.num-b.num:(a.kind==='BJB'?-1:1))):[];
+const countKind=k=>S.ktp?S.ktp.rows.filter(r=>r.kind===k).length:0;
+const aTopic=a=>a.topic||(a.kind==='BJB'?(a.section?'«'+a.section+'» '+t('unitWord'):t('unitFb',{n:a.num})):t('termFb',{q:a.quarter}));
+const fmtClass=f=>({xlsx:'fx',docx:'fw',pdf:'fp',demo:'fd',text:'ft'}[f]||'ft');
+const fmtLetter=f=>({xlsx:'X',docx:'W',pdf:'P',demo:'D',text:'T'}[f]||'F');
+const fmtSize=b=>b>1048576?(b/1048576).toFixed(1)+' МБ':b>1024?Math.round(b/1024)+' КБ':b?b+' Б':'—';
+function objChips(codes,max){
+max=max||3;const shown=codes.slice(0,max).map(c=>'<span class="chip mono">'+esc(c)+'</span>').join('');
+return shown+(codes.length>max?'<span class="chip mono">+'+(codes.length-max)+'</span>':'')||'<span style="color:var(--faint);font-size:11px">—</span>';
+}
+function filteredRows(){
+if(!S.ktp)return[];
+const f=S.f,q=f.q.trim().toLowerCase();
+const match=r=>{
+if(f.quarter&&r.quarter!==f.quarter)return false;
+if(f.view==='a'){if(!isA(r))return false;if(f.type!=='all'&&r.kind!==f.type)return false}
+else{if(!isA(r)&&r.kind!=='lesson')return false;if(f.type!=='all'&&r.kind!==f.type)return false}
+if(q){const hay=(aTopicSafe(r)+' '+(r.section||'')+' '+(r.objectives||[]).join(' ')+' '+(r.raw||'')).toLowerCase();if(!hay.includes(q))return false}
+return true;
+};
+const aTop=a=>isA(a)?aTopic(a):(a.topic||'');
+function aTopicSafe(r){return isA(r)?aTopic(r):(r.topic||'')}
+const list=S.ktp.rows.filter(match);
+return f.view==='a'?list.sort((a,b)=>a.quarter-b.quarter||(a.kind===b.kind?a.num-b.num:(a.kind==='BJB'?-1:1))):list;
+}
+function renderKtpZone(){
+const zone=$('#ktpZone');
+if(!S.ktp){
+zone.innerHTML='<div class="kempty" id="kEmpty"><div class="big">'+ICONS.cal+'</div><h3>'+esc(t('kEmptyT'))+'</h3><p>'+esc(t('kEmptyP'))+'</p>'+
+'<div class="btnrow"><button class="btn gold lg" data-act="add-ktp">'+ICONS.plus+'<span>'+esc(t('aAddKtp'))+'</span></button><button class="btn ghost" data-act="demo">'+ICONS.spark+'<span>'+esc(t('demoShort'))+'</span></button></div>'+
+'<div class="fchips" style="margin-bottom:14px"><span class="fchip"><i style="background:var(--green)"></i>Excel (.xlsx, .xls, .csv)</span><span class="fchip"><i style="background:var(--blue)"></i>Word (.docx, .doc)</span><span class="fchip"><i style="background:var(--red)"></i>PDF (.pdf)</span></div>'+
+'<span class="priv">'+ICONS.shield+'<span>'+esc(t('privacy'))+'</span></span></div>';
+return;
+}
+const k=S.ktp,file=k.file;
+const bjb=countKind('BJB'),tjb=countKind('TJB');
+const qs=uniq(k.rows.filter(r=>r.quarter).map(r=>r.quarter)).length;
+const dt=new Date(file.at);
+const meta=esc(fmtSize(file.size))+' • '+k.rows.filter(r=>r.kind!=='ctx').length+' '+esc(t('rowsWord'))+' • '+pad(dt.getDate())+'.'+pad(dt.getMonth()+1)+' '+pad(dt.getHours())+':'+pad(dt.getMinutes());
+let chips='';
+if(k.subject)chips+='<span class="chip">'+esc(subjName(k.subject))+'</span>';
+if(k.grade)chips+='<span class="chip">'+esc(t('gN',{n:k.grade}))+'</span>';
+let quarters='';
+for(let q=1;q<=4;q++){
+const ls=k.rows.filter(r=>r.kind==='lesson'&&r.quarter===q).length;
+const bs=k.rows.filter(r=>r.kind==='BJB'&&r.quarter===q).length;
+const ts=k.rows.filter(r=>r.kind==='TJB'&&r.quarter===q).length;
+quarters+='<button class="qcard'+(S.f.quarter===q?' on':'')+'" data-act="qf" data-q="'+q+'"><div class="qt">'+esc(t('qN',{n:q}))+'</div><div class="dots">'+'<span class="dot b"></span>'.repeat(bs)+'<span class="dot t"></span>'.repeat(ts)+(bs+ts?'':'<span style="font-size:10px;color:var(--faint)">—</span>')+'</div><div class="ql">'+ls+' '+esc(t('kStatL').toLowerCase())+' • '+bs+' БЖБ • '+ts+' ТЖБ</div></button>';
+}
+zone.innerHTML='<div class="card ktp">'+
+'<div class="ktp-head"><div class="kfile"><span class="fmt '+fmtClass(file.format)+'">'+fmtLetter(file.format)+'</span><div style="min-width:0"><div class="nm" title="'+esc(file.name)+'">'+esc(file.name)+'</div><div class="mt">'+meta+' '+chips+'</div></div></div>'+
+'<div class="kacts">'+
+'<button class="btn gold sm" data-act="ktp-pack">'+ICONS.wand+'<span>'+esc(t('packBtn'))+'</span></button>'+
+'<button class="btn ghost sm" data-act="ktp-excel" title="Excel"><span class="fmt fx" style="width:20px;height:20px;font-size:10px;border-radius:5px">X</span>Excel</button>'+
+'<button class="btn ghost sm" data-act="ktp-word" title="Word"><span class="fmt fw" style="width:20px;height:20px;font-size:10px;border-radius:5px">W</span>Word</button>'+
+'<button class="btn ghost sm" data-act="ktp-pdf" title="PDF"><span class="fmt fp" style="width:20px;height:20px;font-size:10px;border-radius:5px">P</span>PDF</button>'+
+'<button class="btn ghost ibtn" data-act="ktp-replace" title="'+esc(t('replace'))+'">'+ICONS.refresh+'</button>'+
+'<button class="btn red ibtn" data-act="ktp-remove" title="'+esc(t('remove'))+'">'+ICONS.trash+'</button>'+
+'</div></div>'+
+'<div class="stats">'+
+'<div class="stat"><span class="st-ic si-b">'+ICONS.book+'</span><div><div class="st-n" data-count="'+k.lessons+'">0</div><div class="st-l">'+esc(t('kStatL'))+'</div></div></div>'+
+'<div class="stat"><span class="st-ic si-j">'+ICONS.target+'</span><div><div class="st-n" data-count="'+bjb+'">0</div><div class="st-l">'+esc(t('kStatB'))+'</div></div></div>'+
+'<div class="stat"><span class="st-ic si-t">'+ICONS.layers+'</span><div><div class="st-n" data-count="'+tjb+'">0</div><div class="st-l">'+esc(t('kStatT'))+'</div></div></div>'+
+'<div class="stat"><span class="st-ic si-q">'+ICONS.cal+'</span><div><div class="st-n" data-count="'+qs+'">0</div><div class="st-l">'+esc(t('kStatQ'))+'</div></div></div>'+
+'</div>'+
+'<div class="yearl">'+esc(t('yearTitle'))+'</div><div class="quarters">'+quarters+'</div>'+
+'<div class="ktoolbar">'+
+'<div class="seg"><button data-act="vf" data-v="a" class="'+(S.f.view==='a'?'on':'')+'">'+esc(t('viewA'))+' ('+(bjb+tjb)+')</button><button data-act="vf" data-v="all" class="'+(S.f.view==='all'?'on':'')+'">'+esc(t('viewAll'))+'</button></div>'+
+'<div class="seg"><button data-act="tf" data-t="all" class="'+(S.f.type==='all'?'on':'')+'">'+esc(t('all'))+'</button><button data-act="tf" data-t="BJB" class="'+(S.f.type==='BJB'?'on':'')+'">БЖБ</button><button data-act="tf" data-t="TJB" class="'+(S.f.type==='TJB'?'on':'')+'">ТЖБ</button></div>'+
+'<select class="inp" id="kQuarterSel" style="width:auto"><option value="0">'+esc(t('qAll'))+'</option>'+[1,2,3,4].map(q=>'<option value="'+q+'"'+(S.f.quarter===q?' selected':'')+'>'+esc(t('qN',{n:q}))+'</option>').join('')+'</select>'+
+'<div class="ksearch">'+ICONS.search+'<input class="inp" id="kSearch" placeholder="'+esc(t('searchPh'))+'" value="'+esc(S.f.q)+'"></div>'+
+'<span class="kcount" id="kCount"></span>'+
+'</div>'+
+'<div class="ktable" id="kTable"></div>'+
+'<div class="ktp-foot">'+(k.warnings?'<span class="warnnote">'+ICONS.alert+esc(t('warnN',{n:k.warnings}))+'</span>':'')+
+'<button class="btn ghost sm" data-act="ktp-add">'+ICONS.plus+'<span>'+esc(t('manualAdd'))+'</span></button><span class="spacer"></span>'+
+'<span class="priv">'+ICONS.shield+'<span>'+esc(t('privacy'))+'</span></span></div></div>';
+renderKtpRows();animateCounts();
+}
+function renderKtpRows(){
+const tb=$('#kTable');if(!tb)return;
+const list=filteredRows();
+const cnt=$('#kCount');if(cnt)cnt.textContent=t('rowsN',{n:list.length});
+if(!list.length){tb.innerHTML='<div class="knorow">'+esc(t('noRows'))+'</div>';return}
+let html='';
+if(S.f.view==='a'){
+html+='<div class="khead ga"><span>'+esc(t('thType'))+'</span><span>'+esc(t('thTopic'))+'</span><span>'+esc(t('thObj'))+'</span><span>'+esc(t('thQ'))+'</span><span>'+esc(t('thDate'))+'</span><span style="text-align:right">'+esc(t('thAct'))+'</span></div>';
+list.forEach(a=>{
+const sel=S.linked===a.id;
+html+='<div class="krow ga'+(sel?' sel':'')+'" data-rowid="'+a.id+'">'+
+'<div class="kc badge"><span class="tag '+(a.kind==='BJB'?'b':'t')+'">'+(a.kind==='BJB'?'БЖБ':'ТЖБ')+'</span><span class="num">№'+a.num+(a.manual?' • '+esc(t('manual')):'')+'</span></div>'+
+'<div class="kc topic"><div class="tp">'+esc(aTopic(a))+'</div>'+(a.section&&a.section!==aTopic(a)?'<div class="sec">'+esc(a.section)+'</div>':'')+'</div>'+
+'<div class="kc objs" data-l="'+esc(t('thObj'))+'">'+objChips(a.objectives||[])+'</div>'+
+'<div class="kc q" data-l="'+esc(t('thQ'))+'">'+esc(t('qN',{n:a.quarter}))+'</div>'+
+'<div class="kc dt" data-l="'+esc(t('thDate'))+'">'+esc(a.date||'—')+'<span>'+a.hours+' '+esc(t('hShort'))+'</span></div>'+
+'<div class="kc act"><button class="btn gold ibtn" data-act="row-build" data-id="'+a.id+'" title="'+esc(t('build'))+'">'+ICONS.wand+'</button><button class="btn ghost ibtn" data-act="row-edit" data-id="'+a.id+'" title="'+esc(t('edit'))+'">'+ICONS.pen+'</button><button class="btn red ibtn" data-act="row-del" data-id="'+a.id+'" title="'+esc(t('del'))+'">'+ICONS.trash+'</button></div></div>';
+});
+}else{
+html+='<div class="khead gl"><span>'+esc(t('thNum'))+'</span><span>'+esc(t('date'))+'</span><span>'+esc(t('thTopic'))+'</span><span>'+esc(t('thObj'))+'</span><span>'+esc(t('thHours'))+'</span><span>'+esc(t('thQ'))+'</span></div>';
+list.forEach(r=>{
+const a=isA(r);
+html+='<div class="krow gl'+(a?' is-'+r.kind:'')+'">'+
+'<div class="kc n" data-l="'+esc(t('thNum'))+'">'+r.num+'</div>'+
+'<div class="kc d" data-l="'+esc(t('date'))+'">'+esc(r.date||'—')+'</div>'+
+'<div class="kc topic">'+(a?'<span class="tag '+(r.kind==='BJB'?'b':'t')+'" style="margin-bottom:3px">'+(r.kind==='BJB'?'БЖБ':'ТЖБ')+' №'+r.num+'</span>':'')+'<div class="tp">'+esc(a?aTopic(r):(r.topic||'—'))+'</div></div>'+
+'<div class="kc objs" data-l="'+esc(t('thObj'))+'">'+objChips(r.objectives||[],2)+'</div>'+
+'<div class="kc h" data-l="'+esc(t('thHours'))+'">'+r.hours+'</div>'+
+'<div class="kc q" data-l="'+esc(t('thQ'))+'">'+r.quarter+'</div></div>';
+});
+}
+tb.innerHTML=html;
+}
+function animateCounts(){
+$$('#ktpZone [data-count]').forEach(el=>{
+const target=+el.dataset.count;const st=performance.now();
+if(el._raf)cancelAnimationFrame(el._raf);
+const step=now=>{const p=Math.min(1,(now-st)/700);el.textContent=Math.round(target*(1-Math.pow(1-p,3)));if(p<1)el._raf=requestAnimationFrame(step)};
+el._raf=requestAnimationFrame(step);
+});
+}
+/* ============ KTP exports ============ */
+function ktpExportAoa(){
+const list=filteredRows();
+const aoa=[[t('thNum'),t('date'),t('thType'),t('thTopic'),t('thObj'),t('thHours'),t('thQ')]];
+list.forEach((r,i)=>aoa.push([i+1,r.date||'',isA(r)?(r.kind==='BJB'?'БЖБ №'+r.num:'ТЖБ №'+r.num):t('lesson'),isA(r)?aTopic(r):(r.topic||''),(r.objectives||[]).join(', '),r.hours,r.quarter]));
+return{aoa,n:list.length,list};
+}
+function ktpDocHtml(word){
+const{list}=ktpExportAoa();const k=S.ktp;
+let rows='';
+list.forEach((r,i)=>{
+const a=isA(r);
+rows+='<tr'+(a?' class="strong"':'')+'><td class="ctr">'+(i+1)+'</td><td>'+esc(r.date||'—')+'</td><td>'+(a?(r.kind==='BJB'?'БЖБ №'+r.num:'ТЖБ №'+r.num):esc(t('lesson')))+'</td><td>'+esc(a?aTopic(r):(r.topic||'—'))+'</td><td>'+esc((r.objectives||[]).join(', '))+'</td><td class="ctr">'+r.hours+'</td><td class="ctr">'+r.quarter+'</td></tr>';
+});
+return'<div class="doc"><div class="doc-min">'+esc(t('ministry'))+'</div><h2>'+esc(t('ktpExportT'))+'</h2>'+
+'<div class="doc-sub">'+esc(k.file.name)+(k.subject?' • '+esc(subjName(k.subject)):'')+(k.grade?' • '+esc(t('gN',{n:k.grade})):'')+' • '+today()+'</div>'+
+'<table class="doc-grid"><thead><tr><th>'+esc(t('thNum'))+'</th><th>'+esc(t('date'))+'</th><th>'+esc(t('thType'))+'</th><th>'+esc(t('thTopic'))+'</th><th>'+esc(t('thObj'))+'</th><th>'+esc(t('thHours'))+'</th><th>'+esc(t('thQ'))+'</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+'<div class="doc-note">'+esc(t('privacy'))+'</div></div>';
+}
+/* ============ spec generation ============ */
+function parseObjInput(s){return uniq(String(s||'').split(/[,;\s]+/).filter(x=>/^\d{1,2}\.\d{1,2}\.\d{1,2}\.\d{1,2}$/.test(x)))}
+function readFormB(){
+const type=($('input[name="btype"]:checked')||{}).value||'BJB';
+const bookSel=$('#bBook');
+return{type,subject:$('#bSubject').value,grade:+$('#bGrade').value,quarter:+$('#bQuarter').value,pub:$('#bPub').value,
+bookLabel:bookSel.options[bookSel.selectedIndex]?bookSel.options[bookSel.selectedIndex].text:'',
+topic:$('#bTopic').value.trim(),section:$('#bSection').value.trim(),objectives:parseObjInput($('#bObj').value),
+level:$('#bLevel').value,max:clamp(+$('#bMax').value||10,5,40),time:clamp(+$('#bTime').value||20,10,90)};
+}
+function specModel(f){
+const bank=BANK[f.subject]||BANK.inf;
+const w=f.level==='mix'?[0.3,0.4,0.3]:[0,1,2].map(i=>i===+f.level?0.5:0.25);
+let pts=w.map(x=>Math.max(1,Math.round(f.max*x)));
+let diff=f.max-pts.reduce((a,b)=>a+b,0);
+while(diff!==0){const i=w.indexOf(Math.max(...w));const nv=pts[i]+(diff>0?1:-1);if(nv>=1){pts[i]=nv;diff+=diff>0?-1:1}else break}
+const tasks=bank.map((b,i)=>{
+const p=pts[i];const all=S.lang==='kz'?b[4]:b[5];
+const dn=Math.min(all.length,p);const base=Math.floor(p/dn),rem=p%dn;
+const dpts=Array.from({length:dn},(_,j)=>base+(j<rem?1:0));
+return{lvl:i,crit:S.lang==='kz'?b[0]:b[1],task:(S.lang==='kz'?b[2]:b[3]).replace(/\{topic\}/g,f.topic),
+obj:f.objectives[i]||f.objectives[f.objectives.length-1]||'—',desc:all.slice(0,dn),dpts,pts:p};
+});
+return{tasks,total:f.max};
+}
+function specHtml(m,f,word){
+const title=f.type==='BJB'?t('specTitleB'):t('specTitleT');
+const meta=[[t('mP'),subjName(f.subject)],[t('mG'),t('gN',{n:f.grade})],[t('mQ'),t('qN',{n:f.quarter})],[t('mTopic'),f.topic+(f.section&&f.section!==f.topic?' («'+f.section+'»)':'')],[t('mObj'),f.objectives.join(', ')||'—'],[t('mBook'),f.bookLabel||f.pub],[t('mTime'),f.time+' '+t('min')],[t('mMax'),f.max+' '+t('pts')]];
+let body='';
+m.tasks.forEach((task,ti)=>{
+task.desc.forEach((d,di)=>{
+body+='<tr>';
+if(di===0){const rs=' rowspan="'+task.desc.length+'"';
+body+='<td class="ctr"'+rs+'>'+(ti+1)+'</td><td class="ctr"'+rs+'>'+esc(task.obj)+'</td><td'+rs+'>'+esc(task.crit)+'</td><td'+rs+'>'+esc(LVL[task.lvl][S.lang==='kz'?'kz':'ru'])+'</td><td'+rs+'>'+esc(task.task)+'</td>'}
+body+='<td>'+esc(d)+'</td><td class="ctr">'+task.dpts[di]+'</td></tr>';
+});
+});
+let lv;
+if(word){lv='<div class="lvline"><b>'+esc(t('lvSplit'))+':</b> '+m.tasks.map(x=>esc(LVL[x.lvl][S.lang==='kz'?'kz':'ru'])+' — '+x.pts+' '+esc(t('pts'))).join('; ')+'</div>'}
+else{lv='<div class="lvbar">'+m.tasks.map(x=>'<span class="lv lv'+x.lvl+'" style="flex:'+x.pts+'">'+esc(LVL[x.lvl][S.lang==='kz'?'kz':'ru'])+' · '+x.pts+' '+esc(t('pts'))+'</span>').join('')+'</div>'}
+return'<div class="doc"><div class="doc-seal">№110<span>'+esc(t('seal'))+'</span></div><div class="doc-min">'+esc(t('ministry'))+'</div><h2>'+esc(title)+'</h2>'+
+'<table class="doc-meta">'+meta.map(r=>'<tr><th>'+esc(r[0])+'</th><td>'+esc(String(r[1]))+'</td></tr>').join('')+'</table>'+lv+
+'<table class="doc-spec"><thead><tr><th style="width:26px">№</th><th>'+esc(t('mObj'))+'</th><th>'+esc(t('thCrit'))+'</th><th>'+esc(t('thLvl'))+'</th><th>'+esc(t('thTask'))+'</th><th>'+esc(t('thDesc'))+'</th><th style="width:36px">'+esc(t('thPts'))+'</th></tr></thead>'+
+'<tbody>'+body+'</tbody><tfoot><tr><td colspan="6" style="text-align:right">'+esc(t('total'))+'</td><td class="ctr">'+m.total+'</td></tr></tfoot></table>'+
+'<div class="doc-note">'+esc(ll('Мұғалім тапсырмаларды оқу бағдарламасы мен КТЖ-ға сәйкес нақтылайды. Дескрипторлар балдарының қосындысы тапсырма балына тең.','Учитель уточняет задания в соответствии с учебной программой и КТП. Сумма баллов дескрипторов равна баллу задания.'))+'</div></div>';
+}
+function assessToF(a){
+const k=S.ktp||{};
+return{type:a.kind,subject:k.subject||$('#bSubject').value||'inf',grade:k.grade||+$('#bGrade').value||7,quarter:a.quarter,
+topic:aTopic(a),section:a.section||'',objectives:a.objectives||[],level:'mix',
+max:a.kind==='BJB'?10:20,time:a.kind==='BJB'?20:40,pub:$('#bPub').value,bookLabel:''};
+}
+function packHtml(items,word){
+let cover='<div class="doc"><div class="doc-seal">№110<span>'+esc(t('seal'))+'</span></div><div class="doc-min">'+esc(t('ministry'))+'</div><h2>'+esc(t('packTitle'))+'</h2>'+
+'<div class="doc-sub">'+(S.ktp?esc(S.ktp.file.name)+' • ':'')+esc(subjName(items[0].subject))+' • '+esc(t('gN',{n:items[0].grade}))+' • '+today()+'</div>'+
+'<table class="doc-grid"><thead><tr><th>№</th><th>'+esc(t('thType'))+'</th><th>'+esc(t('thQ'))+'</th><th>'+esc(t('thTopic'))+'</th><th>'+esc(t('mMax'))+'</th></tr></thead><tbody>'+
+items.map((f,i)=>'<tr><td class="ctr">'+(i+1)+'</td><td>'+(f.type==='BJB'?'БЖБ / СОР':'ТЖБ / СОЧ')+'</td><td class="ctr">'+f.quarter+'</td><td>'+esc(f.topic)+'</td><td class="ctr">'+f.max+'</td></tr>').join('')+
+'</tbody></table></div>';
+return cover+items.map(f=>'<div class="page-break"></div>'+specHtml(specModel(f),f,word)).join('');
+}
+function renderDocB(){
+const wrap=$('#docBWrap');const has=!!S.docB;
+['bCopy','bWord','bPdf'].forEach(id=>$('#'+id).disabled=!has);
+const cnt=$('#docBCount');
+if(!has){cnt.hidden=true;wrap.innerHTML='<div class="empty">'+ICONS.wand+'<h4>'+esc(t('aEmptyT'))+'</h4><p>'+esc(t('aEmptyP'))+'</p></div>';return}
+let html;
+if(S.docB.mode==='single'){html=specHtml(specModel(S.docB.f),S.docB.f,false);cnt.hidden=true}
+else{html=packHtml(S.docB.items,false);cnt.hidden=false;cnt.textContent=t('specCount',{n:S.docB.items.length})}
+wrap.innerHTML='<div class="paper-scroll"><div class="paper">'+html+'</div></div>';
+}
+function buildBHtml(word){
+if(!S.docB)return'';
+return S.docB.mode==='single'?specHtml(specModel(S.docB.f),S.docB.f,word):packHtml(S.docB.items,word);
+}
+function docBTitle(){
+if(!S.docB)return'SmartTeacher';
+if(S.docB.mode==='pack')return t('packTitle');
+const f=S.docB.f;return(f.type==='BJB'?'БЖБ':'ТЖБ')+' — '+f.topic;
+}
+function generateB(scroll,quiet){
+const f=readFormB();
+if(!f.topic){const el=$('#bTopic');el.classList.remove('err');void el.offsetWidth;el.classList.add('err');el.focus();toast(t('topicReq'),'warn');return}
+S.docB={mode:'single',f};renderDocB();save();
+if(!quiet)toast(t('builtT'));
+if(scroll)$('#outB').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderLink(){
+const box=$('#linkChip');
+if(!S.linked||!S.ktp){box.innerHTML='';return}
+const a=S.ktp.rows.find(r=>r.id===S.linked);
+if(!a){S.linked=null;box.innerHTML='';return}
+box.innerHTML='<div class="linkchip">'+ICONS.link+'<span>'+esc(t('linked'))+': '+(a.kind==='BJB'?'БЖБ':'ТЖБ')+' №'+a.num+' • '+esc(t('qN',{n:a.quarter}))+'</span><button data-act="link-clear" title="'+esc(t('del'))+'">'+ICONS.x+'</button></div>';
+}
+function pickRow(id,quiet){
+const a=S.ktp&&S.ktp.rows.find(r=>r.id===id);if(!a)return;
+$('input[name="btype"][value="'+a.kind+'"]').checked=true;
+$('#bQuarter').value=a.quarter;
+if(S.ktp.subject)$('#bSubject').value=S.ktp.subject;
+if(S.ktp.grade)$('#bGrade').value=S.ktp.grade;
+updateBooks('b');
+$('#bTopic').value=aTopic(a);$('#bTopic').classList.remove('err');
+$('#bSection').value=a.section||'';
+$('#bObj').value=(a.objectives||[]).join(', ');
+$('#bLevel').value='mix';
+$('#bMax').value=a.kind==='BJB'?10:20;$('#bTime').value=a.kind==='BJB'?20:40;
+S.linked=id;renderLink();generateB(!quiet,quiet);renderKtpRows();
+if(!quiet)toast(t('fromKtp'),'info');
+}
+/* ============ QMJ ============ */
+function readFormQ(){
+const bookSel=$('#qBook');
+return{order:$('#qOrder').value,subject:$('#qSubject').value,grade:+$('#qGrade').value,pub:$('#qPub').value,
+bookLabel:bookSel.options[bookSel.selectedIndex]?bookSel.options[bookSel.selectedIndex].text:'',
+teacher:$('#qTeacher').value.trim()||ll('—','—'),date:$('#qDate').value.trim()||today(),
+section:$('#qSection').value.trim(),topic:$('#qTopic').value.trim(),obj:$('#qObj').value.trim(),len:+$('#qLen').value};
+}
+function qmjHtml(f){
+const bank=BANK[f.subject]||BANK.inf;
+const mid=f.len-10;
+const core=(S.lang==='kz'?bank[1][2]:bank[1][3]).replace(/\{topic\}/g,f.topic);
+const crit=S.lang==='kz'?bank[1][0]:bank[1][1];
+const descs=(S.lang==='kz'?bank[1][4]:bank[1][5]).join('; ');
+const meta=[
+[ll('Бөлім','Раздел'),f.section||'—'],[ll('Педагогтің аты-жөні','ФИО педагога'),f.teacher],[ll('Күні','Дата'),f.date],
+[ll('Сынып','Класс'),t('gN',{n:f.grade})],[ll('Пән','Предмет'),subjName(f.subject)],[ll('Оқулық','Учебник'),f.bookLabel||f.pub],
+[ll('Сабақ тақырыбы','Тема урока'),f.topic],[ll('Оқу мақсаты','Цель обучения'),f.obj||'—'],
+[ll('Сабақтың мақсаты','Цель урока'),ll('Барлық оқушы: «'+f.topic+'» бойынша негізгі ұғымдарды анықтайды; көпшілігі: тапсырманы өздігінен орындайды; кейбірі: шешімді негіздеп, күрделендірілген тапсырма орындайды.','Все ученики: определяют базовые понятия по теме «'+f.topic+'»; большинство: выполняют задание самостоятельно; некоторые: обосновывают решение и выполняют усложнённое задание.')]];
+const stages=[
+[ll('Сабақтың басы','Начало урока')+' (5 '+t('min')+')',
+ll('Ұйымдастыру кезеңі. «Шаттық шеңбері» арқылы психологиялық ахуал қалыптастыру. Өткен тақырып бойынша 2 сұрақ арқылы білімді өзектендіру. «'+f.topic+'» тақырыбы мен оқу мақсатын таныстыру, бағалау критерийлерін бірге құру.','Организационный момент. Психологический настрой через «Круг радости». Актуализация знаний через 2 вопроса по прошлой теме. Представление темы «'+f.topic+'» и цели обучения, совместная выработка критериев оценивания.'),
+ll('Сәлемдеседі, көңіл-күйін білдіреді. Сұрақтарға жауап береді. Мақсат пен критерийлерді талқылайды.','Приветствуют, выражают настроение. Отвечают на вопросы. Обсуждают цель и критерии.'),
+ll('Ауызша мадақтау, ынталандыру','Устная похвала, поощрение'),ll('Интерактивті тақта, слайд','Интерактивная доска, слайд')],
+[ll('Сабақтың ортасы','Середина урока')+' ('+mid+' '+t('min')+')',
+ll('Жаңа ұғымдарды мысалмен түсіндіру. Жұптық жұмыс: '+core+' Дескрипторлар арқылы өзара бағалауды ұйымдастыру. Қолдауды қажет ететін оқушыға тірек кесте ұсыну. Сергіту сәті.','Объяснение новых понятий на примерах. Парная работа: '+core+' Организация взаимооценивания по дескрипторам. Опорная таблица для учеников, нуждающихся в поддержке. Физминутка.'),
+ll('Тыңдайды, сұрақ қояды. Жұппен тапсырманы орындайды. Дескриптор бойынша бір-бірін бағалайды.','Слушают, задают вопросы. Выполняют задание в парах. Оценивают друг друга по дескрипторам.'),
+ll('ҚБ: дескриптор бойынша өзара бағалау (2 балл)','ФО: взаимооценивание по дескрипторам (2 балла)'),ll(f.bookLabel||f.pub+' оқулығы','Учебник '+(f.bookLabel||f.pub))+ll('; үлестірме карточкалар','; раздаточные карточки')],
+[ll('Сабақтың соңы','Конец урока')+' (5 '+t('min')+')',
+ll('Қорытындылау: негізгі ойды жинақтау. «Баспалдақ» рефлексиясы. Үй тапсырмасын түсіндіру (сараланған: базалық + шығармашылық).','Обобщение: систематизация главной мысли. Рефлексия «Лестница». Объяснение домашнего задания (дифференцированного: базовое + творческое).'),
+ll('Рефлексия парағын толтырады. Үй тапсырмасын нақтылайды.','Заполняют лист рефлексии. Уточняют домашнее задание.'),
+ll('Өзін-өзі бағалау: «Баспалдақ»','Самооценка: «Лестница»'),ll('Рефлексия парағы','Лист рефлексии')]];
+let extra='<tr><th>'+esc(ll('Саралау','Дифференциация'))+'</th><td>'+esc(ll('Қолдау: тірек кесте, жұптық көмек, қосымша уақыт. Қабілеті жоғары оқушыға: күрделендірілген қосымша тапсырма, бағалаушы рөлі.','Поддержка: опорная таблица, помощь в паре, дополнительное время. Сильным ученикам: усложнённое задание, роль оценщика.'))+'</td></tr>';
+if(f.order==='110'){
+extra+='<tr><th>'+esc(ll('Цифрлық ресурстар және ЖИ құралдары (№110)','Цифровые ресурсы и инструменты ИИ (№110)'))+'</th><td>'+esc(ll('okulyk.kz электрондық оқулығы; Wordwall / Kahoot жаттығуы; ChatGPT промпты: «'+f.topic+' бойынша 3 деңгейлі тапсырма құрастыр». ЖИ нәтижесін мұғалім міндетті түрде тексереді.','Электронный учебник okulyk.kz; упражнение Wordwall / Kahoot; промпт ChatGPT: «Составь задания 3 уровней по теме '+f.topic+'». Результат ИИ обязательно проверяет учитель.'))+'</td></tr>';
+}else if(f.order==='472'){
+extra+='<tr><th>'+esc(ll('Бағалау критерийлері мен дескрипторлар (№472)','Критерии оценивания и дескрипторы (№472)'))+'</th><td>'+esc(ll('Бағалау критерийі: '+crit+'. Дескрипторлар: '+descs+'. ҚБ балдары сабақ соңында жинақталып, кері байланыс беріледі.','Критерий оценивания: '+crit+'. Дескрипторы: '+descs+'. Баллы ФО суммируются в конце урока, даётся обратная связь.'))+'</td></tr>';
+}else{
+extra+='<tr><th>'+esc(ll('Құжат негізі (№130)','Основание документа (№130)'))+'</th><td>'+esc(ll('ҚМЖ педагог жүргізуге міндетті құжаттар тізімі мен үлгісіне сәйкес әзірленді. Мұғалім сынып ерекшелігіне қарай бейімдей алады.','КСП оформлен по перечню и форме обязательных документов педагога. Учитель может адаптировать его под особенности класса.'))+'</td></tr>';
+}
+extra+='<tr><th>'+esc(ll('Қауіпсіздік','Безопасность'))+'</th><td>'+esc(ll('Қауіпсіздік ережелерін сақтау: отырыс қалпы, техникамен жұмыс ережесі, үзіліс режимі.','Соблюдение правил безопасности: осанка, правила работы с техникой, режим пауз.'))+'</td></tr>';
+return'<div class="doc"><div class="doc-seal">№'+f.order+'<span>'+esc(t('seal'))+'</span></div>'+
+'<div class="doc-min">'+esc(ll('ҚР Оқу-ағарту министрінің №'+f.order+' бұйрығына сәйкес','Согласно приказу №'+f.order+' Министра просвещения РК'))+'</div>'+
+'<h2>'+esc(ll('Қысқа мерзімді жоспар (ҚМЖ)','Краткосрочный план (КСП)'))+'</h2>'+
+'<table class="doc-meta">'+meta.map(r=>'<tr><th>'+esc(r[0])+'</th><td>'+esc(String(r[1]))+'</td></tr>').join('')+'</table>'+
+'<table class="doc-grid"><thead><tr><th>'+esc(ll('Сабақ кезеңі / уақыт','Этап урока / время'))+'</th><th>'+esc(ll('Педагогтің әрекеті','Действия педагога'))+'</th><th>'+esc(ll('Оқушының әрекеті','Действия ученика'))+'</th><th>'+esc(ll('Бағалау','Оценивание'))+'</th><th>'+esc(ll('Ресурстар','Ресурсы'))+'</th></tr></thead><tbody>'+
+stages.map(s=>'<tr><td><b>'+esc(s[0])+'</b></td><td>'+esc(s[1])+'</td><td>'+esc(s[2])+'</td><td>'+esc(s[3])+'</td><td>'+esc(s[4])+'</td></tr>').join('')+
+'</tbody></table><table class="doc-meta">'+extra+'</table>'+
+'<div class="doc-note">'+esc(ll('ҚМЖ — икемді құжат: мұғалім оны сынып деңгейі мен қажеттілігіне қарай бейімдейді.','КСП — гибкий документ: учитель адаптирует его под уровень и потребности класса.'))+'</div></div>';
+}
+function renderDocQ(){
+const wrap=$('#docQWrap');const has=!!S.docQ;
+['qCopy','qWord','qPdf'].forEach(id=>$('#'+id).disabled=!has);
+if(!has){wrap.innerHTML='<div class="empty">'+ICONS.book+'<h4>'+esc(t('qEmptyT'))+'</h4><p>'+esc(t('qEmptyP'))+'</p></div>';return}
+$('#qOrderBadge').textContent='№'+S.docQ.f.order;
+wrap.innerHTML='<div class="paper-scroll"><div class="paper">'+qmjHtml(S.docQ.f)+'</div></div>';
+}
+function generateQ(scroll){
+const f=readFormQ();
+if(!f.topic){const el=$('#qTopic');el.classList.remove('err');void el.offsetWidth;el.classList.add('err');el.focus();toast(t('topicReq'),'warn');return}
+S.docQ={f};renderDocQ();save();toast(t('qDone'));
+if(scroll)$('#outQ').scrollIntoView({behavior:'smooth',block:'start'});
+}
+/* ============ class manager ============ */
+function parseRoster(txt){return uniq(txt.split(/\n|;/).map(s=>s.trim()).filter(s=>s.length>1&&/[A-Za-zА-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүҺһІі]/.test(s)))}
+function renderRosterMeta(){
+$('#rCount').textContent=t('cCount',{n:S.roster.length});
+const pool=S.roster.length;
+$('#pickProg').textContent=S.picked.length+'/'+pool;
+$('#progBar').style.width=(pool?Math.round(S.picked.length/pool*100):0)+'%';
+$('#progWrap').style.display=S.fair?'':'none';$('#pickProg').style.display=S.fair?'':'none';
+$('#pickHist').innerHTML=S.picked.length?'<span class="chip gold" style="width:auto">'+esc(t('cToday'))+'</span>'+S.picked.map(n=>'<span class="chip">'+esc(n)+'</span>').join(''):'';
+}
+let picking=false;
+function doPick(){
+if(picking)return;
+if(!S.roster.length){toast(t('cNeed'),'warn');return}
+let pool=S.fair?S.roster.filter(n=>!S.picked.includes(n)):S.roster.slice();
+let reset=false;
+if(!pool.length){S.picked=[];pool=S.roster.slice();reset=true}
+picking=true;const btn=$('#btnPick');btn.disabled=true;
+const disp=$('#pickName');
+const final=pool[Math.floor(Math.random()*pool.length)];
+const seq=[60,60,70,80,100,130,170,230,300];let i=0;
+const tick=()=>{
+if(i<seq.length){disp.textContent=S.roster[Math.floor(Math.random()*S.roster.length)];disp.classList.add('rolling');setTimeout(tick,seq[i++])}
+else{
+disp.classList.remove('rolling');disp.textContent=final;disp.classList.add('pop');confetti(disp);
+setTimeout(()=>disp.classList.remove('pop'),650);
+if(S.fair){S.picked.push(final);if(reset)toast(t('cCycle'),'info')}
+renderRosterMeta();save();picking=false;btn.disabled=false;
+}
+};tick();
+}
+function confetti(el){
+const r=el.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;
+const colors=['#22C7E0','#F5B301','#E052A6','#37C978','#4D9FFF','#F05A5F'];
+for(let i=0;i<14;i++){
+const p=document.createElement('i');p.className='cf';
+p.style.left=cx+'px';p.style.top=cy+'px';p.style.background=colors[i%colors.length];
+p.style.setProperty('--dx',(Math.random()*180-90)+'px');p.style.setProperty('--dy',(Math.random()*-140-20)+'px');p.style.setProperty('--rr',(Math.random()*540-270)+'deg');
+document.body.appendChild(p);setTimeout(()=>p.remove(),850);
+}
+}
+function splitGroups(){
+if(S.roster.length<2){toast(t('cNeed'),'warn');return}
+const n=clamp(+$('#groupN').value||4,2,6);S.groupN=n;
+const sh=shuffle(S.roster.slice());
+const gs=Array.from({length:n},()=>[]);
+sh.forEach((s,i)=>gs[i%n].push(s));
+S.groups=gs;renderGroups();save();
+}
+function renderGroups(){
+const wrap=$('#groupsWrap');
+if(!S.groups||!S.groups.length){wrap.innerHTML='<div class="empty" style="padding:26px">'+ICONS.users+'<p>'+esc(t('cGroupsEmpty'))+'</p></div>';$('#btnGCopy').disabled=true;return}
+$('#btnGCopy').disabled=false;
+wrap.innerHTML='<div class="groups">'+S.groups.map((g,i)=>{
+const tm=TEAM[i%TEAM.length];
+return'<div class="gcard" style="--gc:'+tm[1]+';--d:'+(i*0.07)+'s"><h4>'+esc(t('team',{n:i+1}))+' <em>«'+tm[0]+'» • '+g.length+'</em></h4><div class="mem">'+g.map(n=>'<span class="chip">'+esc(n)+'</span>').join('')+'</div></div>';
+}).join('')+'</div>';
+}
+/* ============ AI tab ============ */
+function renderPassport(){
+const blocks=[
+[ll('Жобаның мақсаты','Цель проекта'),ll('Педагогтердің күнделікті әдістемелік құжаттаманы (ҚМЖ, БЖБ/ТЖБ) әзірлеу уақытын үнемдеу, оқу процесіне цифрлық автоматтандыру мен жасанды интеллект құралдарын тиімді енгізу. КТЖ файлынан БЖБ/ТЖБ-ны автоматты талдау арқылы бағалау жоспарын бір жылға алдын ала дайындау.','Экономия времени педагогов на подготовку ежедневной методической документации (КСП, СОР/СОЧ), эффективное внедрение цифровой автоматизации и инструментов искусственного интеллекта в учебный процесс. Автоматический анализ СОР/СОЧ из файла КТП для заблаговременной подготовки плана оценивания на год.')],
+[ll('Нормативтік негізі','Нормативная основа'),ll('ҚР Оқу-ағарту министрінің №110 бұйрығы (педагогтің цифрлық құзыреттілігі, БЖБ/ТЖБ үлгілері), №130 бұйрығы (ҚМЖ құрылымы) және №472 бұйрығы (жиынтық бағалау талаптары) негізінде әзірленген.','Разработан на основе приказа №110 Министра просвещения РК (цифровая компетентность педагога, образцы СОР/СОЧ), приказа №130 (структура КСП) и приказа №472 (требования к суммативному оцениванию).')],
+[ll('Күтілетін нәтиже','Ожидаемый результат'),ll('Мұғалімнің қағазбастылыққа жұмсайтын уақытын 65%-ға қысқарту, сабақ жоспарлау мен критериалды бағалау сапасын арттыру, екі тілді (KZ/RU) әмбебап қолжетімділік.','Сокращение времени учителя на бумажную работу на 65%, повышение качества планирования уроков и критериального оценивания, универсальная двуязычная (KZ/RU) доступность.')]];
+$('#passportBody').innerHTML=blocks.map((b,i)=>'<div class="pp"><span class="pp-n">'+(i+1)+'.</span><div><h4>'+esc(b[0])+'</h4><p>'+esc(b[1])+'</p></div></div>').join('');
+}
+function passportText(){
+const tmp=document.createElement('div');tmp.innerHTML=$('#passportBody').innerHTML;
+return t('passTitle')+'\n'+t('passSub')+'\n\n'+Array.from(tmp.querySelectorAll('.pp')).map(pp=>pp.querySelector('.pp-n').textContent+' '+pp.querySelector('h4').textContent+'\n'+pp.querySelector('p').textContent).join('\n\n');
+}
+function renderPrompts(){
+$('#promptFilters').innerHTML=PCATS.map(c=>'<button class="chip'+(S.pcat===c[0]?' on':'')+'" data-act="pfilter" data-cat="'+c[0]+'">'+esc(S.lang==='kz'?c[1]:c[2])+'</button>').join('');
+const li=S.lang==='kz'?0:1;
+const list=PROMPTS.map((p,i)=>({p,i})).filter(x=>S.pcat==='all'||x.p.c===S.pcat);
+$('#promptGrid').innerHTML=list.map(({p,i})=>{
+const cat=PCATS.find(c=>c[0]===p.c);
+return'<div class="card pcard"><div class="ph">'+ICONS.spark+'<h4>'+esc(p.t[li])+'</h4></div><pre class="pbody">'+esc(p.b[li])+'</pre><div class="pfoot"><span class="ptag">ChatGPT</span><span class="ptag">Gemini</span><span class="chip">'+esc(S.lang==='kz'?cat[1]:cat[2])+'</span><span class="spacer"></span><button class="btn teal sm" data-act="copy-prompt" data-id="'+i+'">'+ICONS.copy+esc(t('copy'))+'</button></div></div>';
+}).join('');
+}
+function renderCatInfo(){
+$('#catInfo').textContent=t('catSel')+': '+subjName($('#catSubject').value)+' • '+t('gN',{n:+$('#catGrade').value})+' • '+$('#catPub').value;
+}
+/* ============ selects / lang ============ */
+function fillSelect(el,opts,val){
+if(!el)return;const cur=val!==undefined?val:el.value;
+el.innerHTML=opts.map(o=>'<option value="'+esc(o.v)+'">'+esc(o.l)+'</option>').join('');
+if(opts.some(o=>String(o.v)===String(cur)))el.value=cur;
+}
+function fillAllSelects(){
+const sopts=SUBJECTS.map(s=>({v:s.id,l:S.lang==='kz'?s.kz:s.ru}));
+const gopts=Array.from({length:11},(_,i)=>({v:i+1,l:t('gN',{n:i+1})}));
+const qopts=[1,2,3,4].map(q=>({v:q,l:t('qN',{n:q})}));
+const popts=PUBLISHERS.map(p=>({v:p,l:p}));
+['bSubject','qSubject','catSubject'].forEach(id=>fillSelect($('#'+id),sopts,$('#'+id).value||'inf'));
+['bGrade','qGrade','catGrade'].forEach(id=>fillSelect($('#'+id),gopts,$('#'+id).value||7));
+['bPub','qPub','catPub'].forEach(id=>fillSelect($('#'+id),popts,$('#'+id).value||PUBLISHERS[0]));
+fillSelect($('#bQuarter'),qopts,$('#bQuarter').value||1);
+fillSelect($('#eQuarter'),qopts,$('#eQuarter').value||1);
+fillSelect($('#bLevel'),[{v:'mix',l:t('lvlMix')},{v:'0',l:t('lvl0')},{v:'1',l:t('lvl1')},{v:'2',l:t('lvl2')}],$('#bLevel').value||'mix');
+fillSelect($('#qOrder'),[{v:'130',l:t('ord130')},{v:'110',l:t('ord110')},{v:'472',l:t('ord472')}],$('#qOrder').value||'130');
+fillSelect($('#groupN'),[2,3,4,5,6].map(n=>({v:n,l:t('cGroupN',{n})})),S.groupN);
+updateBooks('b');updateBooks('q');
+}
+function updateBooks(prefix){
+const sel=$('#'+prefix+'Book');if(!sel)return;
+const subj=subjName($('#'+prefix+'Subject').value),gr=t('gN',{n:+$('#'+prefix+'Grade').value}),pub=$('#'+prefix+'Pub').value;
+fillSelect(sel,[{v:'b1',l:subj+' · '+gr+' — '+pub+' ('+t('bookMain')+')'},{v:'b2',l:subj+' · '+gr+' — '+pub+' ('+t('bookAlt')+')'},{v:'b3',l:t('bookGuide')+' — '+pub}],sel.value||'b1');
+}
+function applyLang(){
+document.documentElement.lang=S.lang==='kz'?'kk':'ru';
+$$('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)});
+$$('[data-i18n-ph]').forEach(el=>{el.placeholder=t(el.dataset.i18nPh)});
+$$('.lang button').forEach(b=>b.classList.toggle('on',b.dataset.lang===S.lang));
+fillAllSelects();renderKtpZone();renderLink();renderDocB();renderDocQ();renderPassport();renderPrompts();renderCatInfo();renderGroups();renderRosterMeta();
+if(!picking&&$('#pickName').textContent==='—')$('#pickName').textContent='—';
+save();
+}
+/* ============ modals ============ */
+let lastFocus=null;
+function openModal(id){lastFocus=document.activeElement;$('#'+id).classList.add('open');document.body.style.overflow='hidden';const f=$('#'+id).querySelector('button,input,textarea,select');if(f)setTimeout(()=>f.focus(),50)}
+function closeModal(id){$('#'+id).classList.remove('open');if(!$$('.modal.open').length)document.body.style.overflow='';if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+function mView(v){
+['mFile','mText','mBusy','mErr'].forEach(id=>$('#'+id).hidden=true);
+$('#m'+v.charAt(0).toUpperCase()+v.slice(1)).hidden=false;
+$$('#mTabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+$('#mTabs').style.display=(v==='busy')?'none':'';
+}
+function setStep(n){
+[1,2,3].forEach(i=>{const li=$('#bs'+i);li.className=i<n?'done':i===n?'cur':'';li.querySelector('.st').innerHTML=i<n?'✓':''});
+}
+async function handleFile(file){
+if(!file)return;
+const ext=file.name.split('.').pop().toLowerCase();
+if(!['xlsx','xls','csv','doc','docx','pdf'].includes(ext)){openModal('mKtp');mView('err');$('#mErrMsg').textContent=t('errFormat');return}
+if(file.size>15*1048576){openModal('mKtp');mView('err');$('#mErrMsg').textContent=t('errSize');return}
+openModal('mKtp');mView('busy');setStep(1);
+try{
+await sleep(180);setStep(2);
+const parsed=await parseFile(file);
+await sleep(160);setStep(3);
+const a=analyze(parsed);
+await sleep(200);
+const nA=a.rows.filter(isA).length;
+if(!nA){mView('err');$('#mErrMsg').textContent=t('errEmpty');return}
+const format=['xlsx','xls','csv'].includes(ext)?'xlsx':ext==='pdf'?'pdf':'docx';
+S.ktp=Object.assign({file:{name:file.name,format,size:file.size,at:Date.now()}},a);
+S.f={view:'a',type:'all',q:'',quarter:0};S.linked=null;
+closeModal('mKtp');renderKtpZone();renderLink();save();
+toast(t('kSuccess',{b:countKind('BJB'),t:countKind('TJB')}));
+if(parsed.legacy)toast(t('docWarn'),'warn');
+const first=assessList()[0];if(first)pickRow(first.id,true);
+}catch(e){
+mView('err');
+$('#mErrMsg').textContent=e.message==='LIB'?t('errLib'):e.message==='DOC'?t('errDoc'):e.message==='FMT'?t('errFormat'):t('errEmpty');
+}
+}
+function parsePasted(){
+const txt=$('#kText').value.trim();
+if(!txt){mView('err');$('#mErrMsg').textContent=t('errEmpty');return}
+mView('busy');setStep(2);
+setTimeout(()=>{
+setStep(3);
+const lines=txt.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+const a=analyze({lines,hint:lines.slice(0,6).join(' ')});
+if(!a.rows.filter(isA).length){mView('err');$('#mErrMsg').textContent=t('errEmpty');return}
+S.ktp=Object.assign({file:{name:ll('Қойылған мәтін (КТЖ)','Вставленный текст (КТП)'),format:'text',size:0,at:Date.now()}},a);
+S.f={view:'a',type:'all',q:'',quarter:0};S.linked=null;
+closeModal('mKtp');renderKtpZone();renderLink();save();
+toast(t('kSuccess',{b:countKind('BJB'),t:countKind('TJB')}));
+const first=assessList()[0];if(first)pickRow(first.id,true);
+},350);
+}
+/* ============ assessment CRUD ============ */
+let editingId=null;
+function openEdit(id){
+editingId=id||null;
+const a=id&&S.ktp?S.ktp.rows.find(r=>r.id===id):null;
+$('#eTitle').textContent=a?t('eEditT'):t('eAddT');
+$('#eType').value=a?a.kind:'BJB';
+$('#eNum').value=a?a.num:(countKind('BJB')+countKind('TJB')+1);
+fillSelect($('#eQuarter'),[1,2,3,4].map(q=>({v:q,l:t('qN',{n:q})})),a?a.quarter:1);
+$('#eTopic').value=a?aTopic(a):'';$('#eTopic').classList.remove('err');
+$('#eObj').value=a?(a.objectives||[]).join(', '):'';
+$('#eDate').value=a?(a.date||''):'';
+$('#eHours').value=a?a.hours:1;
+openModal('mEdit');
+}
+function saveEdit(){
+const topic=$('#eTopic').value.trim();
+if(!topic){const el=$('#eTopic');el.classList.remove('err');void el.offsetWidth;el.classList.add('err');toast(t('topicReq'),'warn');return}
+if(!S.ktp)return;
+const data={kind:$('#eType').value,num:clamp(+$('#eNum').value||1,1,12),quarter:+$('#eQuarter').value,topic,
+objectives:parseObjInput($('#eObj').value),date:$('#eDate').value.trim(),hours:clamp(+$('#eHours').value||1,1,4),raw:topic,manual:true};
+if(editingId){const r=S.ktp.rows.find(x=>x.id===editingId);if(r)Object.assign(r,data)}
+else S.ktp.rows.push(Object.assign({id:uid()},data));
+closeModal('mEdit');renderKtpZone();renderLink();save();toast(t('eSaved'));
+}
+function delRow(id){
+if(!S.ktp)return;
+const idx=S.ktp.rows.findIndex(r=>r.id===id);if(idx<0)return;
+const backup=S.ktp.rows[idx];
+S.ktp.rows.splice(idx,1);
+if(S.linked===id){S.linked=null;renderLink()}
+renderKtpZone();save();
+toast(t('eDeleted'),'warn',{label:t('undo'),fn:()=>{if(S.ktp){S.ktp.rows.splice(Math.min(idx,S.ktp.rows.length),0,backup);renderKtpZone();save();toast(t('restored'),'info')}}});
+}
+function removeKtp(){
+const backup=S.ktp;S.ktp=null;S.linked=null;S.f={view:'a',type:'all',q:'',quarter:0};
+renderKtpZone();renderLink();save();
+toast(t('kRemoved'),'warn',{label:t('undo'),fn:()=>{S.ktp=backup;renderKtpZone();save();toast(t('restored'),'info')}});
+}
+/* ============ tabs ============ */
+function setTab(tab){
+S.tab=tab;save();
+$$('.tab').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('on',on);b.setAttribute('aria-selected',on)});
+$$('.panel').forEach(p=>p.classList.toggle('active',p.id==='p-'+tab));
+const panel=$('#p-'+tab);
+panel.querySelectorAll('.rise').forEach(el=>{el.style.animation='none';void el.offsetWidth;el.style.animation=''});
+}
+/* ============ events ============ */
+document.addEventListener('click',e=>{
+const el=e.target.closest('[data-act]');if(!el)return;
+const act=el.dataset.act;
+switch(act){
+case'tab':setTab(el.dataset.tab);break;
+case'lang':if(S.lang!==el.dataset.lang){S.lang=el.dataset.lang;applyLang()}break;
+case'add-ktp':openModal('mKtp');mView('file');break;
+case'close-modal':closeModal(el.dataset.m);break;
+case'choose-file':$('#fileKtp').click();break;
+case'demo':loadDemo(false);break;
+case'mtab':mView(el.dataset.v);break;
+case'parse-text':parsePasted();break;
+case'text-sample':$('#kText').value=ll('1-тоқсан\n1-бөлім: Компьютерлік графика\n1 | 08.09.2026 | Растрлық графика ұғымы | 7.2.1.1 | 1\n2 | 10.09.2026 | Векторлық графика | 7.2.1.1 | 1\n3 | 15.09.2026 | Графика форматтары | 7.2.1.2 | 1\n4 | 17.09.2026 | Қабаттармен жұмыс | 7.2.2.2 | 1\n5 | 22.09.2026 | БЖБ №1. «Компьютерлік графика» бөлімі бойынша | 7.2.1.1, 7.2.2.2 | 1\n6 | 24.09.2026 | ТЖБ №1. 1-тоқсан бойынша | | 1','1 четверть\n1 раздел: Компьютерная графика\n1 | 08.09.2026 | Понятие растровой графики | 7.2.1.1 | 1\n2 | 10.09.2026 | Векторная графика | 7.2.1.1 | 1\n3 | 15.09.2026 | Форматы графики | 7.2.1.2 | 1\n4 | 17.09.2026 | Работа со слоями | 7.2.2.2 | 1\n5 | 22.09.2026 | СОР №1 по разделу «Компьютерная графика» | 7.2.1.1, 7.2.2.2 | 1\n6 | 24.09.2026 | СОЧ №1 за 1 четверть | | 1');break;
+case'step':{const inp=$('#'+el.dataset.t);if(!inp)break;const st=+inp.step||1;inp.value=clamp((+inp.value||0)+(+el.dataset.d)*st,+inp.min,+inp.max);inp.dispatchEvent(new Event('input',{bubbles:true}));break}
+case'sample-b':{$('input[name="btype"][value="BJB"]').checked=true;$('#bQuarter').value=2;$('#bSubject').value='inf';$('#bGrade').value=7;$('#bPub').value=PUBLISHERS[0];updateBooks('b');$('#bTopic').value=ll('Растрлық және векторлық графика','Растровая и векторная графика');$('#bSection').value=ll('Компьютерлік графика','Компьютерная графика');$('#bObj').value='7.2.1.1, 7.2.2.1';$('#bLevel').value='mix';$('#bMax').value=10;$('#bTime').value=20;S.linked=null;renderLink();renderKtpRows();toast(t('filled'),'info');break}
+case'build-b':generateB(true,false);break;
+case'copy-b':{const tmp=document.createElement('div');tmp.innerHTML=$('#docBWrap').innerHTML;copyText(tmp.innerText||tmp.textContent);break}
+case'word-b':wordExport(buildBHtml(true),docBTitle(),docBTitle());break;
+case'pdf-b':printExport(buildBHtml(false),docBTitle());break;
+case'link-clear':S.linked=null;renderLink();renderKtpRows();save();break;
+case'ktp-replace':openModal('mKtp');mView('file');break;
+case'ktp-remove':removeKtp();break;
+case'ktp-excel':{const{aoa,n}=ktpExportAoa();if(excelExport(aoa,'KTJ_'+(S.ktp.subject||'plan'),ll('КТЖ','КТП')))toast(t('exported',{n}),'info');break}
+case'ktp-word':{const{n}=ktpExportAoa();wordExport(ktpDocHtml(true),t('ktpExportT'),'KTJ_'+(S.ktp.subject||'plan'));toast(t('exported',{n}),'info');break}
+case'ktp-pdf':{const{n}=ktpExportAoa();printExport(ktpDocHtml(false),'KTJ_'+(S.ktp.subject||'plan'));toast(t('exported',{n}),'info');break}
+case'ktp-pack':{const list=assessList();if(!list.length){toast(t('noRows'),'warn');break}S.docB={mode:'pack',items:list.map(assessToF)};S.linked=null;renderLink();renderKtpRows();renderDocB();save();toast(t('packBuilt',{n:list.length}));$('#outB').scrollIntoView({behavior:'smooth',block:'start'});break}
+case'ktp-add':openEdit(null);break;
+case'save-edit':saveEdit();break;
+case'row-build':pickRow(el.dataset.id,false);break;
+case'row-edit':openEdit(el.dataset.id);break;
+case'row-del':delRow(el.dataset.id);break;
+case'qf':{const q=+el.dataset.q;S.f.quarter=S.f.quarter===q?0:q;renderKtpZone();save();break}
+case'vf':S.f.view=el.dataset.v;renderKtpZone();save();break;
+case'tf':S.f.type=el.dataset.t;renderKtpZone();save();break;
+case'sample-q':{$('#qSubject').value='inf';$('#qGrade').value=7;$('#qPub').value=PUBLISHERS[0];updateBooks('q');$('#qTeacher').value=ll('Айгүл Серікқызы','Айгуль Сериковна');$('#qDate').value=today();$('#qSection').value=ll('Компьютерлік графика','Компьютерная графика');$('#qTopic').value=ll('Растрлық және векторлық графика','Растровая и векторная графика');$('#qObj').value=ll('7.2.1.1 – растрлық және векторлық графиканың ерекшеліктерін ажырату','7.2.1.1 – различать особенности растровой и векторной графики');$('#qLen').value='45';toast(t('filled'),'info');break}
+case'build-q':generateQ(true);break;
+case'copy-q':{const tmp=document.createElement('div');tmp.innerHTML=$('#docQWrap').innerHTML;copyText(tmp.innerText||tmp.textContent);break}
+case'word-q':wordExport(qmjHtml(S.docQ.f),ll('ҚМЖ','КСП')+' — '+S.docQ.f.topic,'KMJ_'+S.docQ.f.topic);break;
+case'pdf-q':printExport(qmjHtml(S.docQ.f),ll('ҚМЖ','КСП')+'_'+S.docQ.f.topic);break;
+case'roster-xlsx':$('#fileRoster').click();break;
+case'roster-sample':S.roster=NAMES.slice();S.picked=[];$('#roster').value=S.roster.join('\n');renderRosterMeta();save();toast(t('cUploaded',{n:S.roster.length}));break;
+case'pick':doPick();break;
+case'cycle-reset':S.picked=[];renderRosterMeta();save();toast(t('cCycle'),'info');break;
+case'split':splitGroups();break;
+case'copy-groups':{if(!S.groups)break;copyText(S.groups.map((g,i)=>t('team',{n:i+1})+' («'+TEAM[i%TEAM.length][0]+'»): '+g.join(', ')).join('\n'));break}
+case'copy-passport':copyText(passportText());break;
+case'copy-prompt':{const p=PROMPTS[+el.dataset.id];if(p)copyText(p.b[S.lang==='kz'?0:1]);break}
+case'pfilter':S.pcat=el.dataset.cat;renderPrompts();save();break;
+}
+});
+const liveB=debounce(()=>{if(S.docB&&S.docB.mode==='single'){const f=readFormB();if(f.topic){S.docB.f=f;renderDocB();save()}}},260);
+const liveQ=debounce(()=>{if(S.docQ){const f=readFormQ();if(f.topic){S.docQ.f=f;renderDocQ();save()}}},260);
+document.addEventListener('input',e=>{
+const el=e.target;
+if(el.id==='kSearch'){S.f.q=el.value;renderKtpRows();save();return}
+if(el.id==='roster'){S.roster=parseRoster(el.value);S.picked=S.picked.filter(n=>S.roster.includes(n));renderRosterMeta();save();return}
+if(['bMax','bTime','eNum','eHours'].includes(el.id)&&el.value!==''){el.value=clamp(+el.value,+el.min,+el.max)}
+if(el.closest('#formB'))liveB();
+if(el.closest('#formQ'))liveQ();
+});
+document.addEventListener('change',e=>{
+const el=e.target;
+if(el.id==='fileKtp'){const f=el.files[0];el.value='';handleFile(f);return}
+if(el.id==='fileRoster'){
+const f=el.files[0];el.value='';if(!f)return;
+if(typeof XLSX==='undefined'){toast(t('errLib'),'err');return}
+f.arrayBuffer().then(buf=>{
+const wb=XLSX.read(buf,{type:'array'});
+const arr=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:false,defval:''});
+const names=[];arr.forEach(row=>row.forEach(c=>String(c).split(/\n|;/).forEach(x=>{x=x.trim();if(x.length>2&&/[A-Za-zА-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүҺһІі]/.test(x)&&!/^(№|аты|фио|имя|name|тегі)/i.test(x))names.push(x)})));
+S.roster=uniq(names);S.picked=[];$('#roster').value=S.roster.join('\n');renderRosterMeta();save();toast(t('cUploaded',{n:S.roster.length}));
+}).catch(()=>toast(t('errEmpty'),'err'));
+return;
+}
+if(el.id==='kQuarterSel'){S.f.quarter=+el.value;renderKtpZone();save();return}
+if(el.id==='groupN'){S.groupN=+el.value;save();return}
+if(el.id==='fairTgl'){S.fair=el.checked;renderRosterMeta();save();return}
+if(['catPub','catSubject','catGrade'].includes(el.id)){renderCatInfo();return}
+if(['bSubject','bGrade','bPub'].includes(el.id)){updateBooks('b');liveB();return}
+if(['qSubject','qGrade','qPub'].includes(el.id)){updateBooks('q');liveQ();return}
+if(el.closest('#formB'))liveB();
+if(el.closest('#formQ'))liveQ();
+});
+document.addEventListener('keydown',e=>{
+if(e.key==='Escape')$$('.modal.open').forEach(m=>closeModal(m.id));
+if(e.key==='Enter'&&e.target.id==='dz'){e.preventDefault();$('#fileKtp').click()}
+});
+/* drag & drop */
+function wireDz(el){
+if(!el)return;
+['dragover','dragenter'].forEach(ev=>el.addEventListener(ev,e=>{e.preventDefault();el.classList.add('over')}));
+['dragleave','dragend'].forEach(ev=>el.addEventListener(ev,()=>el.classList.remove('over')));
+el.addEventListener('drop',e=>{e.preventDefault();el.classList.remove('over');const f=e.dataTransfer.files&&e.dataTransfer.files[0];if(f)handleFile(f)});
+}
+wireDz($('#dz'));
+document.addEventListener('dragover',e=>{if(e.dataTransfer&&Array.from(e.dataTransfer.types||[]).includes('Files'))e.preventDefault()});
+document.addEventListener('drop',e=>{
+if(e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files.length){
+e.preventDefault();
+const zone=e.target.closest('#ktpZone');
+if(zone&&!e.target.closest('#dz'))handleFile(e.dataTransfer.files[0]);
+}
+});
+window.addEventListener('scroll',()=>{$('#topbar').classList.toggle('scrolled',window.scrollY>8)},{passive:true});
+/* ============ init ============ */
+(function init(){
+if(!S.seeded){S.seeded=true;loadDemo(true);
+const first=assessList()[0];
+if(first){
+$('input[name="btype"][value="'+first.kind+'"]').checked=true;
+$('#bQuarter').value=first.quarter;
+if(S.ktp.subject)$('#bSubject').value=S.ktp.subject;
+if(S.ktp.grade)$('#bGrade').value=S.ktp.grade;
+$('#bTopic').value=aTopic(first);$('#bSection').value=first.section||'';$('#bObj').value=(first.objectives||[]).join(', ');
+$('#bMax').value=10;$('#bTime').value=20;S.linked=first.id;
+S.docB={mode:'single',f:readFormB()};
+}
+setTimeout(()=>toast(t('kDemoLoaded'),'info'),900);
+}
+$('#roster').value=S.roster.join('\n');
+$('#fairTgl').checked=S.fair;
+if(!$('#qDate').value)$('#qDate').value=today();
+applyLang();
+setTab(S.tab||'assess');
+renderGroups();renderRosterMeta();
+document.body.classList.add('ready');
+save();
+})();
+</script>
+</body>
+</html>
